@@ -148,6 +148,11 @@ jobs:
           v=$(grep -oP 'versionName = "\K[^"]+' app/build.gradle.kts)
           echo "name=$v" >> "$GITHUB_OUTPUT"
 
+      - name: Point the version tag at this commit
+        run: |
+          git tag -f "v${{ steps.version.outputs.name }}"
+          git push -f origin "refs/tags/v${{ steps.version.outputs.name }}"
+
       - name: Download APK
         uses: actions/download-artifact@v4
         with:
