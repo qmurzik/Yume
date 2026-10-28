@@ -327,8 +327,9 @@ final class PlayerViewModel: NSObject, ObservableObject {
 
     func attach(layer: AVPlayerLayer) {
         guard AVPictureInPictureController.isPictureInPictureSupported(),
-              pipController?.playerLayer !== layer,
-              let controller = AVPictureInPictureController(playerLayer: layer) else { return }
+              pipController?.playerLayer !== layer else { return }
+        let created: AVPictureInPictureController? = AVPictureInPictureController(playerLayer: layer)
+        guard let controller = created else { return }
         controller.canStartPictureInPictureAutomaticallyFromInline = true
         controller.delegate = self
         pipController = controller
