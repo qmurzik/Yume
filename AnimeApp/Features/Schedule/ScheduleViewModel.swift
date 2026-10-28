@@ -21,6 +21,12 @@ final class ScheduleViewModel: ObservableObject {
         return (weekday + 5) % 7 + 1
     }
 
+    /// Calendar date of the given ISO weekday in the current week.
+    static func date(of weekday: Int, from today: Date = Date(), calendar: Calendar = .current) -> Date {
+        let offset = weekday - todayWeekday(today, calendar: calendar)
+        return calendar.date(byAdding: .day, value: offset, to: today) ?? today
+    }
+
     func entries(for day: Int) -> [ScheduleEntry] {
         (entries.value ?? []).filter { $0.weekday == day }
     }

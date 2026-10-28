@@ -18,136 +18,222 @@ private struct AnimeDetailContent: View {
     @EnvironmentObject private var library: LibraryStore
     @State private var player: PlayerContext?
     @State private var descriptionExpanded = false
+    @State private var rangeIndex = 0
+
+    private static let headerHeight: CGFloat = 420
+    private static let rangeSize = 50
 
     init(model: @autoclosure @escaping () -> AnimeDetailViewModel) {
         _model = StateObject(wrappedValue: model())
     }
 
     var body: some View {
-        LoadableView(state: model.anime, retry: { Task { await model.load() } }) { anime in
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    header(anime)
-                    actions(anime)
-                    if !anime.genres.isEmpty { genres(anime) }
-                    if let description = anime.description { descriptionBlock(description) }
-                    episodesSection(anime)
-                    if !anime.related.isEmpty { related(anime) }
-                    AnimeShelf(title: "Похожие", state: model.similar, emptyText: "Похожих тайтлов не нашлось") {
-                        Task { await model.loadSimilar() }
-                    }
-                    .padding(.horizontal, -16)
-                }
-                .padding()
+        Group {
+            switch model.anime {
+            case .idle, .loading:
+                skeleton
+            case .failed(let error):
+                ErrorStateView(error: error) { Task { await model.load() } }
+                    .frame(maxHeight: .infinity)
+            case .loaded(let anime):
+                content(anime)
             }
-            .refreshable { await model.reloadAll() }
-            .navigationTitle(anime.title)
         }
+        .screenBackground()
         .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
         .toolbar {
             if let anime = model.anime.value {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        library.toggleFavorite(SavedAnime(anime: anime))
-                    } label: {
-                        Image(systemName: library.isFavorite(anime.id) ? "heart.fill" : "heart")
+                    HStack(spacing: 8) {
+                        ShareLink(item: AppConfig.shikimoriBaseURL.appendingPathComponent("animes/\(anime.id)")) {
+                            toolbarIcon("square.and.arrow.up")
+                        }
+                        Button {
+                            Haptics.success()
+                            library.toggleFavorite(SavedAnime(anime: anime))
+                        } label: {
+                            toolbarIcon(library.isFavorite(anime.id) ? "heart.fill" : "heart", tint: library.isFavorite(anime.id) ? Theme.pink : .white)
+                        }
+                        .accessibilityLabel(library.isFavorite(anime.id) ? "Убрать из избранного" : "В избранное")
                     }
-                    .accessibilityLabel(library.isFavorite(anime.id) ? "Убрать из избранного" : "В избранное")
                 }
             }
         }
         .task { await model.load() }
         .onChange(of: model.voice) { voice in
+            rangeIndex = defaultRange
             if let voice, let source = model.sourceID {
                 library.rememberChoice(animeID: model.animeID, source: source, voice: voice)
             }
         }
+        .onChange(of: model.episodes.count) { _ in rangeIndex = defaultRange }
         .fullScreenCover(item: $player) { context in
             PlayerScreen(context: context, library: library)
         }
     }
 
+    private func toolbarIcon(_ name: String, tint: Color = .white) -> some View {
+        Image(systemName: name)
+            .font(.subheadline.weight(.bold))
+            .foregroundStyle(tint)
+            .frame(width: 34, height: 34)
+            .background(.ultraThinMaterial, in: Circle())
+    }
+
+    private var skeleton: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 20) {
+                SkeletonBlock(radius: 0).frame(height: Self.headerHeight)
+                SkeletonBlock().frame(height: 50).padding(.horizontal)
+                SkeletonBlock().frame(height: 120).padding(.horizontal)
+                ForEach(0..<4, id: \.self) { _ in SkeletonBlock().frame(height: 72).padding(.horizontal) }
+            }
+            .shimmering()
+        }
+        .ignoresSafeArea(edges: .top)
+        .disabled(true)
+    }
+
+    private func content(_ anime: Anime) -> some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 26) {
+                header(anime)
+                VStack(alignment: .leading, spacing: 26) {
+                    actions(anime)
+                    if !anime.genres.isEmpty { genres(anime) }
+                    if let description = anime.description { descriptionBlock(description) }
+                    facts(anime)
+                    watchSection(anime)
+                }
+                .padding(.horizontal)
+                if !anime.related.isEmpty { related(anime) }
+                AnimeShelf(title: "Похожие", state: model.similar, emptyText: "Похожих тайтлов не нашлось") {
+                    Task { await model.loadSimilar() }
+                }
+            }
+            .padding(.bottom, 30)
+        }
+        .ignoresSafeArea(edges: .top)
+        .refreshable { await model.reloadAll() }
+    }
+
     // MARK: Header
 
     private func header(_ anime: Anime) -> some View {
-        HStack(alignment: .top, spacing: 16) {
-            PosterImage(url: anime.posterURL ?? anime.posterPreviewURL)
-                .frame(width: 140)
-            VStack(alignment: .leading, spacing: 6) {
-                Text(anime.title).font(.title2.weight(.bold))
-                if anime.title != anime.name {
-                    Text(anime.name).font(.subheadline).foregroundStyle(.secondary)
-                }
-                if let score = anime.score {
-                    Label(String(format: "%.2f", score), systemImage: "star.fill")
-                        .font(.headline)
-                        .foregroundStyle(.yellow)
-                }
-                info("Тип", anime.kind?.title)
-                info("Статус", anime.status?.title)
-                info("Эпизоды", anime.episodesText)
-                info("Длительность", anime.duration.flatMap { $0 > 0 ? "\($0) мин." : nil })
-                info("Год", anime.year.map(String.init))
-                info("Студия", anime.studios.isEmpty ? nil : anime.studios.joined(separator: ", "))
-                if let next = anime.nextEpisodeAt, anime.status == .ongoing {
-                    info("Следующая серия", next.formatted(date: .abbreviated, time: .shortened))
-                }
-            }
-            Spacer(minLength: 0)
-        }
-    }
+        GeometryReader { proxy in
+            let pull = max(0, proxy.frame(in: .global).minY)
+            ZStack(alignment: .bottomLeading) {
+                BackdropImage(url: anime.posterURL ?? anime.posterPreviewURL, blur: 22)
+                    .overlay(Theme.background.opacity(0.25))
+                    .overlay(Theme.heroFade)
+                    .frame(width: proxy.size.width, height: Self.headerHeight + pull)
+                    .offset(y: -pull)
 
-    @ViewBuilder
-    private func info(_ title: String, _ value: String?) -> some View {
-        if let value, !value.isEmpty {
-            VStack(alignment: .leading, spacing: 0) {
-                Text(title).font(.caption2).foregroundStyle(.secondary)
-                Text(value).font(.footnote)
+                HStack(alignment: .bottom, spacing: 16) {
+                    PosterImage(url: anime.posterURL ?? anime.posterPreviewURL)
+                        .frame(width: 132)
+                        .shadow(color: .black.opacity(0.6), radius: 18, y: 10)
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(anime.title)
+                            .font(.system(size: 24, weight: .heavy))
+                            .foregroundStyle(.white)
+                            .lineLimit(4)
+                            .minimumScaleFactor(0.8)
+                        if anime.title != anime.name {
+                            Text(anime.name).font(.subheadline).foregroundStyle(Theme.secondaryText).lineLimit(2)
+                        }
+                        HStack(spacing: 6) {
+                            if let score = anime.score {
+                                Tag(text: String(format: "★ %.2f", score), color: Theme.scoreColor(score), filled: true)
+                            }
+                            if let status = anime.status {
+                                Tag(text: status.title, color: status == .ongoing ? Theme.pink : .white)
+                            }
+                        }
+                    }
+                    Spacer(minLength: 0)
+                }
+                .padding(.horizontal)
+                .padding(.bottom, 4)
             }
         }
+        .frame(height: Self.headerHeight)
     }
 
     // MARK: Actions
 
     private func actions(_ anime: Anime) -> some View {
-        HStack(spacing: 12) {
+        VStack(spacing: 10) {
             if let resume = resumePoint {
                 Button {
+                    Haptics.tap()
                     play(index: resume.index, anime: anime)
                 } label: {
-                    Label(resume.label, systemImage: "play.fill")
-                        .frame(maxWidth: .infinity)
+                    HStack {
+                        Image(systemName: "play.fill")
+                        VStack(alignment: .leading, spacing: 1) {
+                            Text(resume.label)
+                            if let detail = resume.detail {
+                                Text(detail).font(.caption.weight(.medium)).opacity(0.85)
+                            }
+                        }
+                        Spacer()
+                        if let fraction = resume.fraction {
+                            ZStack {
+                                Circle().stroke(Color.white.opacity(0.3), lineWidth: 3)
+                                Circle().trim(from: 0, to: fraction).stroke(Color.white, style: StrokeStyle(lineWidth: 3, lineCap: .round))
+                                    .rotationEffect(.degrees(-90))
+                            }
+                            .frame(width: 26, height: 26)
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 4)
                 }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.large)
+                .buttonStyle(PrimaryButtonStyle())
+            } else if model.episodesState.isLoading || model.episodesState.isIdle {
+                SkeletonBlock(radius: 16).frame(height: 56).shimmering()
             }
-            Button {
-                library.toggleFavorite(SavedAnime(anime: anime))
-            } label: {
-                Label(library.isFavorite(anime.id) ? "В избранном" : "В избранное",
-                      systemImage: library.isFavorite(anime.id) ? "heart.fill" : "heart")
-                    .frame(maxWidth: resumePoint == nil ? .infinity : nil)
-            }
-            .buttonStyle(.bordered)
-            .controlSize(.large)
         }
     }
 
+    private struct ResumePoint {
+        let index: Int
+        let label: String
+        var detail: String?
+        var fraction: Double?
+    }
+
     /// Continue the last watched episode, or start the next one / the first one.
-    private var resumePoint: (index: Int, label: String)? {
+    private var resumePoint: ResumePoint? {
         let list = model.episodes
         guard !list.isEmpty else { return nil }
         if let record = library.record(for: model.animeID),
            let index = list.firstIndex(where: { $0.number == record.episodeNumber }) {
             if record.progress.isWatched {
                 if index + 1 < list.count {
-                    return (index + 1, "Смотреть \(list[index + 1].numberText) серию")
+                    return ResumePoint(index: index + 1, label: "Смотреть \(list[index + 1].numberText) серию", detail: "Следующая после просмотренной")
                 }
-                return (index, "Пересмотреть \(list[index].numberText) серию")
+                return ResumePoint(index: index, label: "Пересмотреть \(list[index].numberText) серию", detail: "Это последняя доступная")
             }
-            return (index, "Продолжить \(list[index].numberText) серию")
+            let left = record.duration.map { max(0, $0 - record.position) }
+            return ResumePoint(
+                index: index,
+                label: "Продолжить \(list[index].numberText) серию",
+                detail: left.map { "Осталось \(Int(($0 / 60).rounded(.up))) мин." },
+                fraction: record.progress.fraction
+            )
         }
-        return (0, list.count == 1 ? "Смотреть" : "Смотреть с 1 серии")
+        return ResumePoint(index: 0, label: list.count == 1 ? "Смотреть" : "Смотреть с 1 серии",
+                           detail: "\(list.count) \(Self.episodesWord(list.count)) · \(list[0].voice)")
+    }
+
+    static func episodesWord(_ count: Int) -> String {
+        let mod10 = count % 10, mod100 = count % 100
+        if mod10 == 1 && mod100 != 11 { return "серия" }
+        if (2...4).contains(mod10) && !(12...14).contains(mod100) { return "серии" }
+        return "серий"
     }
 
     private func play(index: Int, anime: Anime) {
@@ -155,55 +241,92 @@ private struct AnimeDetailContent: View {
         player = PlayerContext(anime: SavedAnime(anime: anime), source: source, episodes: model.episodes, startIndex: index)
     }
 
-    // MARK: Genres & description
+    // MARK: Info
 
     private func genres(_ anime: Anime) -> some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 8) {
-                ForEach(anime.genres) { genre in
-                    Text(genre.title)
-                        .font(.caption.weight(.medium))
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 6)
-                        .background(Color(.secondarySystemBackground), in: Capsule())
+        Flow(spacing: 8) {
+            ForEach(anime.genres) { genre in
+                NavigationLink(value: CatalogRoute(title: genre.title, query: CatalogQuery(genreIDs: [genre.id]))) {
+                    Chip(title: genre.title)
                 }
+                .buttonStyle(PressableStyle())
             }
         }
     }
 
     private func descriptionBlock(_ text: String) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text("Описание").font(.title3.weight(.bold))
+        VStack(alignment: .leading, spacing: 10) {
+            Text("О тайтле").font(.title3.weight(.heavy))
             Text(text)
                 .font(.callout)
+                .foregroundStyle(Color.white.opacity(0.85))
+                .lineSpacing(3)
                 .lineLimit(descriptionExpanded ? nil : 5)
-            Button(descriptionExpanded ? "Свернуть" : "Подробнее") {
-                withAnimation { descriptionExpanded.toggle() }
+            Button {
+                withAnimation(.easeInOut) { descriptionExpanded.toggle() }
+            } label: {
+                HStack(spacing: 4) {
+                    Text(descriptionExpanded ? "Свернуть" : "Читать полностью")
+                    Image(systemName: descriptionExpanded ? "chevron.up" : "chevron.down").font(.caption.weight(.bold))
+                }
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(Theme.pink)
             }
-            .font(.callout.weight(.semibold))
         }
     }
 
-    // MARK: Episodes
+    private struct Fact: Identifiable {
+        let title: String
+        let value: String
+        var id: String { title }
+    }
 
-    private func episodesSection(_ anime: Anime) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Серии").font(.title3.weight(.bold))
-            if model.availableSources.count > 1 {
-                Picker("Источник", selection: Binding(get: { model.sourceID ?? .aniLibria }, set: { model.selectSource($0) })) {
-                    ForEach(model.availableSources) { source in
-                        Text(source.title).tag(source)
-                    }
+    private func facts(_ anime: Anime) -> some View {
+        let candidates: [(String, String?)] = [
+            ("Тип", anime.kind?.title),
+            ("Эпизоды", anime.episodesText),
+            ("Длительность", anime.duration.flatMap { $0 > 0 ? "\($0) мин." : nil }),
+            ("Год", anime.year.map(String.init)),
+            ("Студия", anime.studios.isEmpty ? nil : anime.studios.joined(separator: ", ")),
+            ("Следующая серия", anime.status == .ongoing ? anime.nextEpisodeAt?.formatted(date: .abbreviated, time: .shortened) : nil),
+        ]
+        let items = candidates.compactMap { title, value in value.map { Fact(title: title, value: $0) } }
+
+        return LazyVGrid(columns: [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)], spacing: 10) {
+            ForEach(items) { item in
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(item.title).font(.caption).foregroundStyle(Theme.tertiaryText)
+                    Text(item.value).font(.subheadline.weight(.semibold)).foregroundStyle(.white).lineLimit(2)
                 }
-                .pickerStyle(.segmented)
-            } else if let source = model.sourceID {
-                Text("Источник: \(source.title)").font(.footnote).foregroundStyle(.secondary)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(12)
+                .card(radius: 12)
             }
+        }
+    }
+
+    // MARK: Watching
+
+    private func watchSection(_ anime: Anime) -> some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(alignment: .firstTextBaseline) {
+                Text("Смотреть").font(.title3.weight(.heavy))
+                Spacer()
+                if !model.episodes.isEmpty {
+                    Text("\(model.episodes.count) \(Self.episodesWord(model.episodes.count))")
+                        .font(.subheadline)
+                        .foregroundStyle(Theme.secondaryText)
+                }
+            }
+            sourceChips
             sourceNotes
 
             switch model.episodesState {
             case .idle, .loading:
-                LoadingStateView(text: "Ищем серии…")
+                VStack(spacing: 10) {
+                    ForEach(0..<4, id: \.self) { _ in SkeletonBlock(radius: 14).frame(height: 74) }
+                }
+                .shimmering()
             case .failed(let error) where error.isNotFound:
                 EmptyStateView(
                     title: "Нет в источнике «\(model.sourceID?.title ?? "")»",
@@ -215,26 +338,42 @@ private struct AnimeDetailContent: View {
             case .loaded where model.episodes.isEmpty:
                 EmptyStateView(title: "Серий пока нет", message: "Они появятся, когда выйдут.", systemImage: "clock")
             case .loaded:
-                voicePicker
-                LazyVStack(spacing: 8) {
-                    ForEach(Array(model.episodes.enumerated()), id: \.element.id) { index, episode in
-                        EpisodeRow(
-                            episode: episode,
-                            progress: library.progress(animeID: anime.id, episode: episode.number)
-                        )
-                        .onTapGesture { play(index: index, anime: anime) }
-                        .contextMenu {
-                            let watched = library.progress(animeID: anime.id, episode: episode.number)?.isWatched == true
-                            Button {
-                                library.markWatched(!watched, anime: SavedAnime(anime: anime), episode: episode)
-                            } label: {
-                                Label(watched ? "Отметить непросмотренной" : "Отметить просмотренной",
-                                      systemImage: watched ? "eye.slash" : "eye")
-                            }
-                        }
+                voiceChips
+                rangeChips
+                episodeList(anime)
+            }
+        }
+    }
+
+    private var sourceChips: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                ForEach(model.availableSources) { source in
+                    Button {
+                        Haptics.selection()
+                        model.selectSource(source)
+                    } label: {
+                        Chip(title: source.title,
+                             systemImage: model.missingIn.contains(source) ? "xmark.circle" : "play.tv",
+                             isSelected: model.sourceID == source,
+                             isDisabled: model.missingIn.contains(source) && model.sourceID != source)
                     }
+                    .buttonStyle(PressableStyle())
+                }
+                ForEach(model.disabledSources) { source in
+                    Chip(title: source.title, systemImage: "key.fill", isDisabled: true)
                 }
             }
+        }
+    }
+
+    @ViewBuilder
+    private var sourceNotes: some View {
+        if !model.disabledSources.isEmpty {
+            Label("\(model.disabledSources.map(\.title).joined(separator: ", ")): в сборке нет ключа приложения (см. README).",
+                  systemImage: "info.circle")
+                .font(.caption)
+                .foregroundStyle(Theme.tertiaryText)
         }
     }
 
@@ -247,63 +386,112 @@ private struct AnimeDetailContent: View {
     }
 
     @ViewBuilder
-    private var sourceNotes: some View {
-        let missing = model.missingIn.filter { $0 != model.sourceID }
-        if !missing.isEmpty, model.episodesState.value != nil {
-            Label("Нет в: \(missing.map(\.title).joined(separator: ", "))", systemImage: "info.circle")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-        }
-        if !model.disabledSources.isEmpty {
-            Label("\(model.disabledSources.map(\.title).joined(separator: ", ")) выключен: в сборке нет ключа приложения (см. README).",
-                  systemImage: "key")
-                .font(.caption)
-                .foregroundStyle(.secondary)
+    private var voiceChips: some View {
+        let voices = model.voices
+        if voices.count > 1 {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Озвучка и субтитры").font(.caption.weight(.semibold)).foregroundStyle(Theme.tertiaryText)
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        ForEach(voices, id: \.self) { voice in
+                            Button {
+                                Haptics.selection()
+                                model.voice = voice
+                            } label: {
+                                Chip(title: "\(voice) · \(model.voiceCounts[voice] ?? 0)",
+                                     systemImage: voice.localizedCaseInsensitiveContains("субтитр") ? "captions.bubble" : "waveform",
+                                     isSelected: (model.voice ?? voices.first) == voice)
+                            }
+                            .buttonStyle(PressableStyle())
+                        }
+                    }
+                }
+            }
+        } else if let voice = voices.first {
+            Label(voice, systemImage: "waveform").font(.footnote.weight(.semibold)).foregroundStyle(Theme.secondaryText)
         }
     }
 
+    private var ranges: [Range<Int>] {
+        let count = model.episodes.count
+        guard count > Self.rangeSize + 10 else { return [0..<count] }
+        return stride(from: 0, to: count, by: Self.rangeSize).map { $0..<min(count, $0 + Self.rangeSize) }
+    }
+
+    /// The range holding the episode to resume, so long series open where the user is.
+    private var defaultRange: Int {
+        guard let index = resumePoint?.index else { return 0 }
+        return ranges.firstIndex { $0.contains(index) } ?? 0
+    }
+
     @ViewBuilder
-    private var voicePicker: some View {
-        let voices = model.voices
-        if voices.count > 1 {
-            Menu {
-                Picker("Озвучка", selection: Binding(get: { model.voice ?? voices.first ?? "" }, set: { model.voice = $0 })) {
-                    ForEach(voices, id: \.self) { voice in
-                        Text(voice).tag(voice)
+    private var rangeChips: some View {
+        if ranges.count > 1 {
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    ForEach(Array(ranges.enumerated()), id: \.offset) { offset, range in
+                        Button {
+                            Haptics.selection()
+                            rangeIndex = offset
+                        } label: {
+                            Chip(title: "\(model.episodes[range.lowerBound].numberText)–\(model.episodes[range.upperBound - 1].numberText)",
+                                 isSelected: rangeIndex == offset)
+                        }
+                        .buttonStyle(PressableStyle())
                     }
                 }
-            } label: {
-                HStack {
-                    Image(systemName: "waveform")
-                    Text(model.voice ?? voices.first ?? "Озвучка").lineLimit(1)
-                    Spacer()
-                    Image(systemName: "chevron.up.chevron.down").font(.caption)
-                }
-                .padding(12)
-                .background(Color(.secondarySystemBackground), in: RoundedRectangle(cornerRadius: 10))
             }
-        } else if let voice = voices.first {
-            Label(voice, systemImage: "waveform").font(.footnote).foregroundStyle(.secondary)
+        }
+    }
+
+    private func episodeList(_ anime: Anime) -> some View {
+        let range = ranges.indices.contains(rangeIndex) ? ranges[rangeIndex] : (ranges.first ?? 0..<0)
+        let current = library.record(for: anime.id)
+        return LazyVStack(spacing: 10) {
+            ForEach(Array(range), id: \.self) { index in
+                let episode = model.episodes[index]
+                let progress = library.progress(animeID: anime.id, episode: episode.number)
+                Button {
+                    Haptics.tap()
+                    play(index: index, anime: anime)
+                } label: {
+                    EpisodeRow(episode: episode, progress: progress,
+                               isCurrent: current?.episodeNumber == episode.number && current?.voice == episode.voice)
+                }
+                .buttonStyle(PressableStyle(scale: 0.98))
+                .contextMenu {
+                    let watched = progress?.isWatched == true
+                    Button {
+                        library.markWatched(!watched, anime: SavedAnime(anime: anime), episode: episode)
+                    } label: {
+                        Label(watched ? "Отметить непросмотренной" : "Отметить просмотренной",
+                              systemImage: watched ? "eye.slash" : "eye")
+                    }
+                }
+            }
         }
     }
 
     // MARK: Related
 
     private func related(_ anime: Anime) -> some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("Связанное").font(.title3.weight(.bold))
+        VStack(alignment: .leading, spacing: 12) {
+            SectionHeader(title: "Связанное", subtitle: "Сезоны, фильмы и спешлы")
             ScrollView(.horizontal, showsIndicators: false) {
-                LazyHStack(alignment: .top, spacing: 12) {
+                LazyHStack(alignment: .top, spacing: 14) {
                     ForEach(anime.related, id: \.anime.id) { item in
                         NavigationLink(value: AnimeRoute(id: item.anime.id, preview: item.anime)) {
-                            VStack(alignment: .leading, spacing: 4) {
-                                AnimeCard(anime: item.anime, width: 110)
-                                Text(item.relation).font(.caption2).foregroundStyle(Color.accentColor)
+                            VStack(alignment: .leading, spacing: 6) {
+                                AnimeCard(anime: item.anime, width: 118)
+                                Text(item.relation)
+                                    .font(.caption2.weight(.bold))
+                                    .foregroundStyle(Theme.pink)
                             }
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(PressableStyle())
                     }
                 }
+                .padding(.horizontal)
             }
         }
     }
@@ -312,35 +500,68 @@ private struct AnimeDetailContent: View {
 private struct EpisodeRow: View {
     let episode: SourceEpisode
     let progress: EpisodeProgress?
+    var isCurrent = false
 
     var body: some View {
         HStack(spacing: 12) {
-            if episode.previewURL != nil {
-                ThumbnailImage(url: episode.previewURL).frame(width: 96)
-            } else {
-                Text(episode.numberText)
-                    .font(.headline.monospacedDigit())
-                    .frame(width: 44, height: 44)
-                    .background(Color(.tertiarySystemBackground), in: RoundedRectangle(cornerRadius: 8))
+            ZStack(alignment: .bottomLeading) {
+                if episode.previewURL != nil {
+                    ThumbnailImage(url: episode.previewURL)
+                } else {
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .fill(LinearGradient(colors: [Theme.violet.opacity(0.35), Theme.pink.opacity(0.25)],
+                                             startPoint: .topLeading, endPoint: .bottomTrailing))
+                        .aspectRatio(16 / 9, contentMode: .fit)
+                        .overlay {
+                            Text(episode.numberText)
+                                .font(.system(size: 22, weight: .heavy).monospacedDigit())
+                                .foregroundStyle(.white)
+                        }
+                }
+                if let progress, progress.position > 0, !progress.isWatched {
+                    GeometryReader { proxy in
+                        Capsule().fill(Theme.accentGradient)
+                            .frame(width: proxy.size.width * progress.fraction, height: 3)
+                            .frame(maxHeight: .infinity, alignment: .bottom)
+                    }
+                    .padding(4)
+                }
             }
+            .frame(width: 112)
+            .overlay {
+                Image(systemName: "play.fill")
+                    .font(.caption.weight(.bold))
+                    .foregroundStyle(.white)
+                    .frame(width: 28, height: 28)
+                    .background(Color.black.opacity(0.45), in: Circle())
+            }
+
             VStack(alignment: .leading, spacing: 4) {
-                Text(episode.displayTitle).font(.subheadline.weight(.medium)).lineLimit(2)
-                if let duration = episode.duration {
-                    Text("\(Int(duration / 60)) мин.").font(.caption).foregroundStyle(.secondary)
+                Text(episode.displayTitle)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(.white)
+                    .lineLimit(2)
+                    .multilineTextAlignment(.leading)
+                HStack(spacing: 6) {
+                    if let duration = episode.duration {
+                        Text("\(Int((duration / 60).rounded())) мин.")
+                    }
+                    if isCurrent {
+                        Text("· Вы остановились здесь").foregroundStyle(Theme.pink)
+                    }
                 }
-                if let progress, !progress.isWatched, progress.position > 0 {
-                    ProgressView(value: progress.fraction).tint(.accentColor)
-                }
+                .font(.caption)
+                .foregroundStyle(Theme.secondaryText)
             }
             Spacer(minLength: 0)
             if progress?.isWatched == true {
-                Image(systemName: "checkmark.circle.fill").foregroundStyle(.green)
-            } else {
-                Image(systemName: "play.circle").foregroundStyle(Color.accentColor)
+                Image(systemName: "checkmark.circle.fill").font(.title3).foregroundStyle(.green)
             }
         }
-        .padding(10)
-        .background(Color(.secondarySystemBackground).opacity(0.6), in: RoundedRectangle(cornerRadius: 12))
+        .padding(8)
+        .background(isCurrent ? Theme.surfaceStrong : Theme.surface, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).strokeBorder(isCurrent ? Theme.pink.opacity(0.5) : Theme.stroke))
+        .opacity(progress?.isWatched == true ? 0.7 : 1)
         .contentShape(Rectangle())
     }
 }

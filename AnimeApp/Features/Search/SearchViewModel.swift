@@ -5,12 +5,16 @@ import Foundation
 final class SearchViewModel: ObservableObject {
     @Published var text = ""
     @Published private(set) var results: Loadable<[Anime]> = .idle
+    @Published private(set) var trending: Loadable<[Anime]> = .idle
+    @Published private(set) var recent: [String]
 
     static let debounce: UInt64 = 450_000_000
+    private static let recentKey = "search.recent"
     private let services: AppServices
 
     init(services: AppServices = .live) {
         self.services = services
+        recent = UserDefaults.standard.stringArray(forKey: Self.recentKey) ?? []
     }
 
     var trimmed: String { text.trimmingCharacters(in: .whitespacesAndNewlines) }
@@ -34,5 +38,32 @@ final class SearchViewModel: ObservableObject {
         } catch {
             results = .failed(error)
         }
+    }
+
+    func loadTrending() async {
+        guard trending.isIdle else { return }
+        trending = .loading
+        do {
+            trending = .loaded(try await services.shikimori.animes(HomeViewModel.ongoingQuery, page: 1, limit: 12))
+        } catch is CancellationError {
+            trending = .idle
+        } catch {
+            trending = .failed(error)
+        }
+    }
+
+    /// Remembers the current query once the user acts on it.
+    func commit() {
+        let query = trimmed
+        guard query.count >= 2 else { return }
+        recent.removeAll { $0.caseInsensitiveCompare(query) == .orderedSame }
+        recent.insert(query, at: 0)
+        recent = Array(recent.prefix(10))
+        UserDefaults.standard.set(recent, forKey: Self.recentKey)
+    }
+
+    func clearRecent() {
+        recent = []
+        UserDefaults.standard.removeObject(forKey: Self.recentKey)
     }
 }

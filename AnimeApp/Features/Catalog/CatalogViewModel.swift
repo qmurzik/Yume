@@ -12,7 +12,7 @@ final class CatalogViewModel: ObservableObject {
     @Published private(set) var isLoadingMore = false
     @Published private(set) var loadMoreError: Error?
     @Published private(set) var reachedEnd = false
-    @Published private(set) var query = CatalogQuery()
+    @Published private(set) var query: CatalogQuery
     @Published private(set) var genres: Loadable<[Genre]> = .idle
 
     private let services: AppServices
@@ -20,7 +20,8 @@ final class CatalogViewModel: ObservableObject {
     /// Bumped on every filter change so late responses for old filters are dropped.
     private var generation = 0
 
-    init(services: AppServices = .live) {
+    init(query: CatalogQuery = CatalogQuery(), services: AppServices = .live) {
+        self.query = query
         self.services = services
     }
 
@@ -96,6 +97,45 @@ final class CatalogViewModel: ObservableObject {
         } catch {
             genres = .failed(error)
         }
+    }
+
+    struct ActiveFilter: Identifiable {
+        let title: String
+        /// The current query with this filter removed.
+        let without: CatalogQuery
+        var id: String { title }
+    }
+
+    /// Human-readable active filters, each with a query that removes it.
+    var activeFilters: [ActiveFilter] {
+        var result: [ActiveFilter] = []
+        let genreNames = Dictionary(uniqueKeysWithValues: (genres.value ?? []).map { ($0.id, $0.title) })
+        for id in query.genreIDs.sorted() {
+            var copy = query
+            copy.genreIDs.remove(id)
+            result.append(ActiveFilter(title: genreNames[id] ?? "Жанр", without: copy))
+        }
+        if let season = query.season {
+            var copy = query
+            copy.season = nil
+            result.append(ActiveFilter(title: season.title, without: copy))
+        }
+        if let year = query.year {
+            var copy = query
+            copy.year = nil
+            result.append(ActiveFilter(title: String(year), without: copy))
+        }
+        if let kind = query.kind {
+            var copy = query
+            copy.kind = nil
+            result.append(ActiveFilter(title: kind.title, without: copy))
+        }
+        if let status = query.status {
+            var copy = query
+            copy.status = nil
+            result.append(ActiveFilter(title: status.title, without: copy))
+        }
+        return result
     }
 
     private static func unique(_ list: [Anime]) -> [Anime] {

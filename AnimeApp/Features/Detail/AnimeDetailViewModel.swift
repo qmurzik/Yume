@@ -36,6 +36,11 @@ final class AnimeDetailViewModel: ObservableObject {
 
     var hasDetails: Bool { anime.value?.studios.isEmpty == false || anime.value?.description != nil }
 
+    /// Episodes per voice, for the voice chips.
+    var voiceCounts: [String: Int] {
+        Dictionary(grouping: episodesState.value ?? [], by: \.voice).mapValues(\.count)
+    }
+
     /// Voices sorted by how many episodes they have, most complete first.
     var voices: [String] {
         let all = episodesState.value ?? []

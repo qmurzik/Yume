@@ -4,11 +4,11 @@ struct LoadingStateView: View {
     var text = "Загрузка…"
 
     var body: some View {
-        VStack(spacing: 12) {
-            ProgressView()
-            Text(text).font(.footnote).foregroundStyle(.secondary)
+        VStack(spacing: 14) {
+            ProgressView().tint(Theme.pink).controlSize(.large)
+            Text(text).font(.footnote).foregroundStyle(Theme.secondaryText)
         }
-        .frame(maxWidth: .infinity, minHeight: 160)
+        .frame(maxWidth: .infinity, minHeight: 180)
         .padding()
     }
 }
@@ -19,25 +19,35 @@ struct ErrorStateView: View {
     let retry: () -> Void
 
     var body: some View {
-        VStack(spacing: compact ? 8 : 12) {
-            Image(systemName: "exclamationmark.triangle")
-                .font(compact ? .title3 : .largeTitle)
-                .foregroundStyle(.orange)
+        VStack(spacing: compact ? 10 : 14) {
+            ZStack {
+                Circle().fill(Color.orange.opacity(0.14)).frame(width: compact ? 44 : 72, height: compact ? 44 : 72)
+                Image(systemName: "wifi.exclamationmark")
+                    .font(compact ? .title3.weight(.semibold) : .title.weight(.semibold))
+                    .foregroundStyle(.orange)
+            }
             if !compact {
-                Text("Что-то пошло не так").font(.headline)
+                Text("Не получилось загрузить").font(.headline).foregroundStyle(.white)
             }
             Text(error.localizedDescription)
                 .font(.footnote)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Theme.secondaryText)
                 .multilineTextAlignment(.center)
                 .lineLimit(4)
-            Button(action: retry) {
+            Button {
+                Haptics.tap()
+                retry()
+            } label: {
                 Label("Повторить", systemImage: "arrow.clockwise")
+                    .font(.subheadline.weight(.semibold))
+                    .padding(.horizontal, 18)
+                    .padding(.vertical, 10)
+                    .background(Theme.accentGradient, in: Capsule())
+                    .foregroundStyle(.white)
             }
-            .buttonStyle(.borderedProminent)
-            .controlSize(compact ? .small : .regular)
+            .buttonStyle(PressableStyle())
         }
-        .frame(maxWidth: .infinity, minHeight: compact ? 120 : 220)
+        .frame(maxWidth: .infinity, minHeight: compact ? 130 : 240)
         .padding()
     }
 }
@@ -48,44 +58,23 @@ struct EmptyStateView: View {
     var systemImage = "tray"
 
     var body: some View {
-        VStack(spacing: 10) {
-            Image(systemName: systemImage)
-                .font(.largeTitle)
-                .foregroundStyle(.secondary)
-            Text(title).font(.headline).multilineTextAlignment(.center)
+        VStack(spacing: 14) {
+            ZStack {
+                Circle().fill(Theme.accentGradient).opacity(0.18).frame(width: 88, height: 88)
+                Image(systemName: systemImage)
+                    .font(.system(size: 34, weight: .semibold))
+                    .foregroundStyle(Theme.accentGradient)
+            }
+            Text(title).font(.headline).foregroundStyle(.white).multilineTextAlignment(.center)
             if let message {
                 Text(message)
                     .font(.footnote)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Theme.secondaryText)
                     .multilineTextAlignment(.center)
+                    .frame(maxWidth: 320)
             }
         }
-        .frame(maxWidth: .infinity, minHeight: 200)
+        .frame(maxWidth: .infinity, minHeight: 240)
         .padding()
-    }
-}
-
-/// Renders loading, error (with retry), empty and loaded states of one request.
-struct LoadableView<Value, Content: View>: View {
-    let state: Loadable<Value>
-    var emptyTitle = "Здесь пока пусто"
-    var emptyMessage: String?
-    var isEmpty: (Value) -> Bool = { _ in false }
-    let retry: () -> Void
-    @ViewBuilder let content: (Value) -> Content
-
-    var body: some View {
-        switch state {
-        case .idle, .loading:
-            LoadingStateView()
-        case .failed(let error):
-            ErrorStateView(error: error, retry: retry)
-        case .loaded(let value):
-            if isEmpty(value) {
-                EmptyStateView(title: emptyTitle, message: emptyMessage)
-            } else {
-                content(value)
-            }
-        }
     }
 }

@@ -2,15 +2,22 @@ import SwiftUI
 
 struct SearchView: View {
     @StateObject private var model = SearchViewModel()
+    private let columns = [GridItem(.adaptive(minimum: 106, maximum: 170), spacing: 14, alignment: .top)]
 
     var body: some View {
         NavigationStack {
-            content
-                .navigationTitle("Поиск")
-                .searchable(text: $model.text, placement: .navigationBarDrawer(displayMode: .always), prompt: "Название на русском или в оригинале")
-                .autocorrectionDisabled()
-                .task(id: model.text) { await model.search() }
-                .animeNavigation()
+            ScrollView {
+                content.padding(.bottom, 24)
+            }
+            .scrollDismissesKeyboard(.immediately)
+            .screenBackground()
+            .navigationTitle("Поиск")
+            .searchable(text: $model.text, placement: .navigationBarDrawer(displayMode: .always), prompt: "Фрирен, Frieren, 葬送のフリーレン…")
+            .autocorrectionDisabled()
+            .onSubmit(of: .search) { model.commit() }
+            .task(id: model.text) { await model.search() }
+            .task { await model.loadTrending() }
+            .animeNavigation()
         }
     }
 
@@ -18,20 +25,74 @@ struct SearchView: View {
     private var content: some View {
         switch model.results {
         case .idle:
-            EmptyStateView(title: "Найдите аниме", message: "Введите хотя бы два символа: «Фрирен», «Frieren», «葬送のフリーレン».", systemImage: "magnifyingglass")
+            idle
         case .loading:
-            LoadingStateView(text: "Ищем…")
+            VStack(spacing: 10) {
+                ForEach(0..<6, id: \.self) { _ in SkeletonRow() }
+            }
+            .padding()
         case .failed(let error):
             ErrorStateView(error: error) { Task { await model.search(debounced: false) } }
         case .loaded(let items) where items.isEmpty:
-            EmptyStateView(title: "Ничего не найдено", message: "По запросу «\(model.trimmed)» ничего нет. Проверьте написание.", systemImage: "questionmark.circle")
+            EmptyStateView(title: "Ничего не найдено", message: "По запросу «\(model.trimmed)» ничего нет. Попробуйте оригинальное название.", systemImage: "questionmark.circle")
         case .loaded(let items):
-            List(items) { anime in
-                NavigationLink(value: AnimeRoute(id: anime.id, preview: anime)) {
-                    AnimeRow(anime: anime)
+            LazyVStack(spacing: 10) {
+                ForEach(items) { anime in
+                    NavigationLink(value: AnimeRoute(id: anime.id, preview: anime)) {
+                        AnimeRow(anime: anime)
+                    }
+                    .buttonStyle(PressableStyle(scale: 0.98))
+                    .simultaneousGesture(TapGesture().onEnded { model.commit() })
                 }
             }
-            .listStyle(.plain)
+            .padding(.horizontal)
+            .padding(.top, 8)
         }
+    }
+
+    private var idle: some View {
+        VStack(alignment: .leading, spacing: 26) {
+            if !model.recent.isEmpty {
+                VStack(alignment: .leading, spacing: 12) {
+                    SectionHeader(title: "Вы искали") {
+                        Button("Очистить") { model.clearRecent() }
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(Theme.pink)
+                    }
+                    Flow(spacing: 8) {
+                        ForEach(model.recent, id: \.self) { query in
+                            Button {
+                                Haptics.selection()
+                                model.text = query
+                            } label: {
+                                Chip(title: query, systemImage: "clock.arrow.circlepath")
+                            }
+                            .buttonStyle(PressableStyle())
+                        }
+                    }
+                    .padding(.horizontal)
+                }
+            }
+            VStack(alignment: .leading, spacing: 12) {
+                SectionHeader(title: "Сейчас смотрят", subtitle: "Популярные онгоинги")
+                switch model.trending {
+                case .idle, .loading:
+                    SkeletonGrid(columns: columns)
+                case .failed(let error):
+                    ErrorStateView(error: error, compact: true) { Task { await model.loadTrending() } }
+                case .loaded(let items):
+                    LazyVGrid(columns: columns, spacing: 20) {
+                        ForEach(items) { anime in
+                            NavigationLink(value: AnimeRoute(id: anime.id, preview: anime)) {
+                                AnimeCard(anime: anime)
+                            }
+                            .buttonStyle(PressableStyle())
+                        }
+                    }
+                    .padding(.horizontal)
+                }
+            }
+        }
+        .padding(.top, 8)
     }
 }

@@ -6,6 +6,17 @@ final class HomeViewModel: ObservableObject {
     @Published private(set) var ongoing: Loadable<[Anime]> = .idle
     @Published private(set) var updated: Loadable<[Anime]> = .idle
     @Published private(set) var popular: Loadable<[Anime]> = .idle
+    @Published private(set) var top: Loadable<[Anime]> = .idle
+
+    static let ongoingQuery: CatalogQuery = {
+        var query = CatalogQuery()
+        query.status = .ongoing
+        query.order = .popularity
+        return query
+    }()
+
+    static let popularQuery = CatalogQuery(order: .popularity)
+    static let topQuery = CatalogQuery(order: .ranked)
 
     private let services: AppServices
 
@@ -22,22 +33,28 @@ final class HomeViewModel: ObservableObject {
         async let first: Void = loadOngoing()
         async let second: Void = loadUpdated()
         async let third: Void = loadPopular()
-        _ = await (first, second, third)
+        async let fourth: Void = loadTop()
+        _ = await (first, second, third, fourth)
     }
 
     func loadOngoing() async {
-        var query = CatalogQuery()
-        query.status = .ongoing
-        query.order = .popularity
         ongoing = .loading
-        ongoing = await result { try await self.services.shikimori.animes(query, page: 1, limit: 20) }
+        ongoing = await result { try await self.services.shikimori.animes(Self.ongoingQuery, page: 1, limit: 20) }
     }
 
     func loadPopular() async {
-        var query = CatalogQuery()
-        query.order = .popularity
         popular = .loading
-        popular = await result { try await self.services.shikimori.animes(query, page: 1, limit: 20) }
+        popular = await result { try await self.services.shikimori.animes(Self.popularQuery, page: 1, limit: 20) }
+    }
+
+    func loadTop() async {
+        top = .loading
+        top = await result { try await self.services.shikimori.animes(Self.topQuery, page: 1, limit: 20) }
+    }
+
+    /// Hero banner: the most popular ongoing titles that have a description-worthy poster.
+    var featured: [Anime] {
+        Array((ongoing.value ?? []).filter { $0.posterURL != nil }.prefix(6))
     }
 
     /// Fresh episodes come from AniLibria; metadata and posters are taken from Shikimori by id.

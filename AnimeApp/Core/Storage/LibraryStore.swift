@@ -122,6 +122,19 @@ final class LibraryStore: ObservableObject {
         scheduleSave()
     }
 
+    // MARK: Stats
+
+    var watchedEpisodesCount: Int {
+        data.progress.values.reduce(0) { $0 + $1.values.filter(\.isWatched).count }
+    }
+
+    /// Total watch time in seconds: full duration for finished episodes, position for the rest.
+    var watchedSeconds: Double {
+        data.progress.values.reduce(0) { total, episodes in
+            total + episodes.values.reduce(0) { $0 + ($1.isWatched ? ($1.duration ?? $1.position) : $1.position) }
+        }
+    }
+
     // MARK: Persistence
 
     /// Progress is updated every few seconds while playing, so writes are coalesced.
