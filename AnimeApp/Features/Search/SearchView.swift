@@ -5,9 +5,11 @@ struct SearchView: View {
     private let columns = [GridItem(.adaptive(minimum: 106, maximum: 170), spacing: 14, alignment: .top)]
 
     var body: some View {
-        NavigationStack {
+        ZoomNavigationStack {
             ScrollView {
-                content.padding(.bottom, 24)
+                content
+                    .padding(.bottom, 24)
+                    .animation(Motion.fade, value: model.results.phaseKey)
             }
             .scrollDismissesKeyboard(.immediately)
             .screenBackground()
@@ -17,7 +19,6 @@ struct SearchView: View {
             .onSubmit(of: .search) { model.commit() }
             .task(id: model.text) { await model.search() }
             .task { await model.loadTrending() }
-            .animeNavigation()
         }
     }
 
@@ -37,11 +38,12 @@ struct SearchView: View {
             EmptyStateView(title: "Ничего не найдено", message: "По запросу «\(model.trimmed)» ничего нет. Попробуйте оригинальное название.", systemImage: "questionmark.circle")
         case .loaded(let items):
             LazyVStack(spacing: 10) {
-                ForEach(items) { anime in
-                    NavigationLink(value: AnimeRoute(id: anime.id, preview: anime)) {
-                        AnimeRow(anime: anime)
+                ForEach(Array(items.enumerated()), id: \.element.id) { index, anime in
+                    NavigationLink(value: AnimeRoute(id: anime.id, preview: anime, zoomID: "search-\(anime.id)")) {
+                        AnimeRow(anime: anime, zoomID: "search-\(anime.id)")
                     }
                     .buttonStyle(PressableStyle(scale: 0.98))
+                    .appear(index)
                     .simultaneousGesture(TapGesture().onEnded { model.commit() })
                 }
             }
@@ -82,11 +84,12 @@ struct SearchView: View {
                     ErrorStateView(error: error, compact: true) { Task { await model.loadTrending() } }
                 case .loaded(let items):
                     LazyVGrid(columns: columns, spacing: 20) {
-                        ForEach(items) { anime in
-                            NavigationLink(value: AnimeRoute(id: anime.id, preview: anime)) {
-                                AnimeCard(anime: anime)
+                        ForEach(Array(items.enumerated()), id: \.element.id) { index, anime in
+                            NavigationLink(value: AnimeRoute(id: anime.id, preview: anime, zoomID: "trend-\(anime.id)")) {
+                                AnimeCard(anime: anime, zoomID: "trend-\(anime.id)")
                             }
                             .buttonStyle(PressableStyle())
+                            .appear(index)
                         }
                     }
                     .padding(.horizontal)

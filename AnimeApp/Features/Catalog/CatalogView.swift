@@ -2,10 +2,9 @@ import SwiftUI
 
 struct CatalogView: View {
     var body: some View {
-        NavigationStack {
+        ZoomNavigationStack {
             CatalogGrid(model: CatalogViewModel(), showsFilters: true)
                 .navigationTitle("Каталог")
-                .animeNavigation()
         }
     }
 }
@@ -43,6 +42,8 @@ private struct CatalogGrid: View {
             .padding(.bottom, 24)
         }
         .screenBackground()
+        .animation(Motion.fade, value: model.phaseKey)
+        .animation(Motion.snappy, value: model.query)
         .refreshable { await model.reload() }
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) { sortMenu }
@@ -117,9 +118,9 @@ private struct CatalogGrid: View {
     private var content: some View {
         switch model.phase {
         case .idle, .loading:
-            SkeletonGrid(columns: columns)
+            SkeletonGrid(columns: columns).transition(.opacity)
         case .failed(let error):
-            ErrorStateView(error: error) { Task { await model.reload() } }
+            ErrorStateView(error: error) { Task { await model.reload() } }.transition(.opacity)
         case .loaded where model.items.isEmpty:
             VStack(spacing: 12) {
                 EmptyStateView(title: "Ничего не найдено", message: "Попробуйте ослабить фильтры.", systemImage: "line.3.horizontal.decrease.circle")
@@ -132,15 +133,17 @@ private struct CatalogGrid: View {
             }
         case .loaded:
             LazyVGrid(columns: columns, spacing: 20) {
-                ForEach(model.items) { anime in
-                    NavigationLink(value: AnimeRoute(id: anime.id, preview: anime)) {
-                        AnimeCard(anime: anime)
+                ForEach(Array(model.items.enumerated()), id: \.element.id) { index, anime in
+                    NavigationLink(value: AnimeRoute(id: anime.id, preview: anime, zoomID: "grid-\(anime.id)")) {
+                        AnimeCard(anime: anime, zoomID: "grid-\(anime.id)")
                     }
                     .buttonStyle(PressableStyle())
+                    .appear(index)
                     .task { await model.loadMoreIfNeeded(current: anime) }
                 }
             }
             .padding(.horizontal)
+            .transition(.opacity)
             footer
         }
     }

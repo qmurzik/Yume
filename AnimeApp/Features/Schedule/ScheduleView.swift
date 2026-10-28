@@ -5,7 +5,7 @@ struct ScheduleView: View {
     private let today = ScheduleViewModel.todayWeekday()
 
     var body: some View {
-        NavigationStack {
+        ZoomNavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 18) {
                     daySelector
@@ -14,10 +14,10 @@ struct ScheduleView: View {
                 .padding(.bottom, 24)
             }
             .screenBackground()
+            .animation(Motion.fade, value: model.entries.phaseKey)
             .refreshable { await model.load() }
             .navigationTitle("Расписание")
             .task { await model.loadIfNeeded() }
-            .animeNavigation()
         }
     }
 
@@ -86,16 +86,24 @@ struct ScheduleView: View {
                     EmptyStateView(title: "В этот день серий нет", message: "Выберите другой день недели.", systemImage: "calendar.badge.exclamationmark")
                 } else {
                     LazyVStack(spacing: 10) {
-                        ForEach(items) { entry in
-                            if let id = entry.title.shikimoriID {
-                                NavigationLink(value: AnimeRoute(id: id)) { ScheduleRow(entry: entry, navigable: true) }
+                        ForEach(Array(items.enumerated()), id: \.element.id) { index, entry in
+                            Group {
+                                if let id = entry.title.shikimoriID {
+                                    NavigationLink(value: AnimeRoute(id: id, zoomID: "day-\(id)")) {
+                                        ScheduleRow(entry: entry, navigable: true).zoomSource("day-\(id)")
+                                    }
                                     .buttonStyle(PressableStyle(scale: 0.98))
-                            } else {
-                                ScheduleRow(entry: entry, navigable: false)
+                                } else {
+                                    ScheduleRow(entry: entry, navigable: false)
+                                }
                             }
+                            .appear(index)
                         }
                     }
                     .padding(.horizontal)
+                    // A fresh list per day, sliding in from the side.
+                    .id(model.day)
+                    .transition(.asymmetric(insertion: .move(edge: .trailing).combined(with: .opacity), removal: .opacity))
                 }
             }
         }

@@ -9,6 +9,15 @@ final class CatalogViewModel: ObservableObject {
 
     @Published private(set) var items: [Anime] = []
     @Published private(set) var phase: Phase = .idle
+
+    var phaseKey: Int {
+        switch phase {
+        case .idle: return 0
+        case .loading: return 1
+        case .loaded: return items.isEmpty ? 2 : 3
+        case .failed: return 4
+        }
+    }
     @Published private(set) var isLoadingMore = false
     @Published private(set) var loadMoreError: Error?
     @Published private(set) var reachedEnd = false

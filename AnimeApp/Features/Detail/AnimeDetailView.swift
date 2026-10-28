@@ -19,6 +19,7 @@ private struct AnimeDetailContent: View {
     @State private var player: PlayerContext?
     @State private var descriptionExpanded = false
     @State private var rangeIndex = 0
+    @State private var showSettings = false
 
     private static let headerHeight: CGFloat = 420
     private static let rangeSize = 50
@@ -40,6 +41,7 @@ private struct AnimeDetailContent: View {
             }
         }
         .screenBackground()
+        .animation(Motion.fade, value: model.anime.phaseKey)
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.hidden, for: .navigationBar)
         .toolbar {
@@ -70,6 +72,12 @@ private struct AnimeDetailContent: View {
         .onChange(of: model.episodes.count) { _ in rangeIndex = defaultRange }
         .fullScreenCover(item: $player) { context in
             PlayerScreen(context: context, library: library)
+        }
+        .sheet(isPresented: $showSettings, onDismiss: { model.refreshSources() }) {
+            SettingsView()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: YummyCredentials.didChange)) { _ in
+            model.refreshSources()
         }
     }
 
@@ -137,6 +145,7 @@ private struct AnimeDetailContent: View {
                     VStack(alignment: .leading, spacing: 8) {
                         Text(anime.title)
                             .font(.system(size: 24, weight: .heavy))
+                            .appear(1)
                             .foregroundStyle(.white)
                             .lineLimit(4)
                             .minimumScaleFactor(0.8)
@@ -341,9 +350,14 @@ private struct AnimeDetailContent: View {
                 voiceChips
                 rangeChips
                 episodeList(anime)
+                    .id("\(model.sourceID?.rawValue ?? "")-\(model.voice ?? "")-\(rangeIndex)")
+                    .transition(.opacity.combined(with: .move(edge: .bottom)))
             }
         }
-    }
+        .animation(Motion.spring, value: model.episodesState.phaseKey)
+        .animation(Motion.spring, value: model.voice)
+        .animation(Motion.spring, value: rangeIndex)
+        .animation(Motion.snappy, value: model.sourceID)
 
     private var sourceChips: some View {
         ScrollView(.horizontal, showsIndicators: false) {
@@ -361,7 +375,13 @@ private struct AnimeDetailContent: View {
                     .buttonStyle(PressableStyle())
                 }
                 ForEach(model.disabledSources) { source in
-                    Chip(title: source.title, systemImage: "key.fill", isDisabled: true)
+                    Button {
+                        Haptics.tap()
+                        showSettings = true
+                    } label: {
+                        Chip(title: "\(source.title) · войти", systemImage: "key.fill", isDisabled: true)
+                    }
+                    .buttonStyle(PressableStyle())
                 }
             }
         }
@@ -370,10 +390,15 @@ private struct AnimeDetailContent: View {
     @ViewBuilder
     private var sourceNotes: some View {
         if !model.disabledSources.isEmpty {
-            Label("\(model.disabledSources.map(\.title).joined(separator: ", ")): в сборке нет ключа приложения (см. README).",
-                  systemImage: "info.circle")
-                .font(.caption)
-                .foregroundStyle(Theme.tertiaryText)
+            Button {
+                showSettings = true
+            } label: {
+                Label("Войдите в \(model.disabledSources.map(\.title).joined(separator: ", ")), чтобы открыть больше озвучек и субтитров",
+                      systemImage: "info.circle")
+                    .font(.caption)
+                    .foregroundStyle(Theme.secondaryText)
+                    .multilineTextAlignment(.leading)
+            }
         }
     }
 
@@ -450,6 +475,7 @@ private struct AnimeDetailContent: View {
         return LazyVStack(spacing: 10) {
             ForEach(Array(range), id: \.self) { index in
                 let episode = model.episodes[index]
+                let position = index - range.lowerBound
                 let progress = library.progress(animeID: anime.id, episode: episode.number)
                 Button {
                     Haptics.tap()
@@ -459,6 +485,7 @@ private struct AnimeDetailContent: View {
                                isCurrent: current?.episodeNumber == episode.number && current?.voice == episode.voice)
                 }
                 .buttonStyle(PressableStyle(scale: 0.98))
+                .appear(position)
                 .contextMenu {
                     let watched = progress?.isWatched == true
                     Button {
@@ -479,16 +506,17 @@ private struct AnimeDetailContent: View {
             SectionHeader(title: "Связанное", subtitle: "Сезоны, фильмы и спешлы")
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(alignment: .top, spacing: 14) {
-                    ForEach(anime.related, id: \.anime.id) { item in
-                        NavigationLink(value: AnimeRoute(id: item.anime.id, preview: item.anime)) {
+                    ForEach(Array(anime.related.enumerated()), id: \.element.anime.id) { index, item in
+                        NavigationLink(value: AnimeRoute(id: item.anime.id, preview: item.anime, zoomID: "related-\(item.anime.id)")) {
                             VStack(alignment: .leading, spacing: 6) {
-                                AnimeCard(anime: item.anime, width: 118)
+                                AnimeCard(anime: item.anime, width: 118, zoomID: "related-\(item.anime.id)")
                                 Text(item.relation)
                                     .font(.caption2.weight(.bold))
                                     .foregroundStyle(Theme.pink)
                             }
                         }
                         .buttonStyle(PressableStyle())
+                        .appear(index)
                     }
                 }
                 .padding(.horizontal)

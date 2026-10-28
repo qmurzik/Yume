@@ -3,6 +3,8 @@ import SwiftUI
 struct AnimeRoute: Hashable {
     let id: Int
     var preview: Anime?
+    /// Identifies the tapped card for the zoom transition; unique within a screen.
+    var zoomID: String?
 }
 
 /// "See all" from a shelf: a catalog grid with a preset query.
@@ -16,6 +18,7 @@ extension View {
     func animeNavigation() -> some View {
         navigationDestination(for: AnimeRoute.self) { route in
             AnimeDetailView(route: route)
+                .zoomDestination(route.zoomID)
         }
         .navigationDestination(for: CatalogRoute.self) { route in
             AnimeGridScreen(title: route.title, query: route.query)
@@ -42,10 +45,12 @@ struct ScoreBadge: View {
 struct AnimeCard: View {
     let anime: Anime
     var width: CGFloat?
+    var zoomID: String?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 7) {
             PosterImage(url: anime.posterPreviewURL ?? anime.posterURL)
+                .zoomSource(zoomID)
                 .overlay(alignment: .topLeading) {
                     if let score = anime.score { ScoreBadge(score: score) }
                 }
@@ -72,10 +77,12 @@ struct AnimeCard: View {
 
 struct SavedAnimeCard: View {
     let anime: SavedAnime
+    var zoomID: String?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 7) {
             PosterImage(url: anime.posterURL)
+                .zoomSource(zoomID)
                 .shadow(color: .black.opacity(0.35), radius: 10, y: 6)
             Text(anime.title)
                 .font(.subheadline.weight(.semibold))
@@ -93,11 +100,13 @@ struct SavedAnimeCard: View {
 /// Row used by search results.
 struct AnimeRow: View {
     let anime: Anime
+    var zoomID: String?
 
     var body: some View {
         HStack(spacing: 14) {
             PosterImage(url: anime.posterPreviewURL ?? anime.posterURL, cornerRadius: 10)
                 .frame(width: 66)
+                .zoomSource(zoomID)
             VStack(alignment: .leading, spacing: 5) {
                 Text(anime.title).font(.headline).foregroundStyle(.white).lineLimit(2)
                 if anime.title != anime.name {
@@ -146,24 +155,28 @@ struct AnimeShelf: View {
             }
             switch state {
             case .idle, .loading:
-                SkeletonShelf()
+                SkeletonShelf().transition(.opacity)
             case .failed(let error):
-                ErrorStateView(error: error, compact: true, retry: retry)
+                ErrorStateView(error: error, compact: true, retry: retry).transition(.opacity)
             case .loaded(let items) where items.isEmpty:
                 Text(emptyText).font(.footnote).foregroundStyle(Theme.secondaryText).padding(.horizontal)
             case .loaded(let items):
                 ScrollView(.horizontal, showsIndicators: false) {
                     LazyHStack(alignment: .top, spacing: 14) {
-                        ForEach(items) { anime in
-                            NavigationLink(value: AnimeRoute(id: anime.id, preview: anime)) {
-                                AnimeCard(anime: anime, width: 132)
+                        ForEach(Array(items.enumerated()), id: \.element.id) { index, anime in
+                            let zoomID = "\(title)-\(anime.id)"
+                            NavigationLink(value: AnimeRoute(id: anime.id, preview: anime, zoomID: zoomID)) {
+                                AnimeCard(anime: anime, width: 132, zoomID: zoomID)
                             }
                             .buttonStyle(PressableStyle())
+                            .appear(index)
                         }
                     }
                     .padding(.horizontal)
                 }
+                .transition(.opacity)
             }
         }
+        .animation(Motion.fade, value: state.phaseKey)
     }
 }

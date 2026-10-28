@@ -5,7 +5,7 @@ struct HomeView: View {
     @EnvironmentObject private var library: LibraryStore
 
     var body: some View {
-        NavigationStack {
+        ZoomNavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 30) {
                     hero
@@ -36,20 +36,22 @@ struct HomeView: View {
             .refreshable { await model.reload() }
             .task { await model.loadIfNeeded() }
             .toolbar(.hidden, for: .navigationBar)
-            .animeNavigation()
         }
     }
 
     @ViewBuilder
     private var hero: some View {
-        switch model.ongoing {
-        case .loaded where !model.featured.isEmpty:
-            HeroCarousel(items: model.featured)
-        case .failed:
-            Color.clear.frame(height: 100)
-        default:
-            SkeletonBlock(radius: 0).frame(height: 520).shimmering()
+        Group {
+            switch model.ongoing {
+            case .loaded where !model.featured.isEmpty:
+                HeroCarousel(items: model.featured).transition(.opacity)
+            case .failed:
+                Color.clear.frame(height: 100)
+            default:
+                SkeletonBlock(radius: 0).frame(height: 540).shimmering().transition(.opacity)
+            }
         }
+        .animation(.easeInOut(duration: 0.5), value: model.ongoing.phaseKey)
     }
 }
 
@@ -87,9 +89,15 @@ private struct HeroCarousel: View {
 
     private func slide(_ anime: Anime) -> some View {
         ZStack(alignment: .bottomLeading) {
-            BackdropImage(url: anime.posterURL ?? anime.posterPreviewURL)
-                .overlay(Theme.heroFade)
-                .overlay(LinearGradient(colors: [.black.opacity(0.45), .clear], startPoint: .top, endPoint: .center))
+            // Parallax: the picture moves slower than the page while swiping.
+            GeometryReader { proxy in
+                BackdropImage(url: anime.posterURL ?? anime.posterPreviewURL)
+                    .frame(width: proxy.size.width * 1.3, height: proxy.size.height)
+                    .offset(x: -proxy.size.width * 0.15 - proxy.frame(in: .global).minX * 0.3)
+            }
+            .overlay(Theme.heroFade)
+            .overlay(LinearGradient(colors: [.black.opacity(0.45), .clear], startPoint: .top, endPoint: .center))
+            .zoomSource("hero-\(anime.id)")
 
             VStack(alignment: .leading, spacing: 12) {
                 HStack(spacing: 6) {
@@ -110,7 +118,7 @@ private struct HeroCarousel: View {
                         .foregroundStyle(Theme.secondaryText)
                 }
                 HStack(spacing: 10) {
-                    NavigationLink(value: AnimeRoute(id: anime.id, preview: anime)) {
+                    NavigationLink(value: AnimeRoute(id: anime.id, preview: anime, zoomID: "hero-\(anime.id)")) {
                         Label("Смотреть", systemImage: "play.fill")
                     }
                     .buttonStyle(PrimaryButtonStyle())
@@ -120,6 +128,9 @@ private struct HeroCarousel: View {
                     } label: {
                         Image(systemName: library.isFavorite(anime.id) ? "heart.fill" : "heart")
                             .foregroundStyle(library.isFavorite(anime.id) ? Theme.pink : .white)
+                            .id(library.isFavorite(anime.id))
+                            .transition(.scale(scale: 0.4).combined(with: .opacity))
+                            .animation(.spring(response: 0.35, dampingFraction: 0.5), value: library.isFavorite(anime.id))
                     }
                     .buttonStyle(GlassButtonStyle(circle: true))
                     .accessibilityLabel(library.isFavorite(anime.id) ? "Убрать из избранного" : "В избранное")
@@ -141,11 +152,13 @@ struct ContinueWatchingShelf: View {
             SectionHeader(title: "Продолжить просмотр")
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(spacing: 14) {
-                    ForEach(records) { record in
-                        NavigationLink(value: AnimeRoute(id: record.anime.id)) {
+                    ForEach(Array(records.enumerated()), id: \.element.id) { index, record in
+                        NavigationLink(value: AnimeRoute(id: record.anime.id, zoomID: "continue-\(record.anime.id)")) {
                             ContinueCard(record: record)
+                                .zoomSource("continue-\(record.anime.id)")
                         }
                         .buttonStyle(PressableStyle())
+                        .appear(index)
                         .contextMenu {
                             Button(role: .destructive) {
                                 library.removeFromHistory(record.anime.id)

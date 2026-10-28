@@ -39,6 +39,19 @@ struct PlayerScrubber: View {
                     .shadow(color: Theme.pink.opacity(0.6), radius: 6)
                     .offset(x: width * fraction(current) - (isScrubbing ? 11 : 7))
             }
+            .overlay(alignment: .leading) {
+                if isScrubbing {
+                    Text(TimeFormat.string(current))
+                        .font(.caption.weight(.bold).monospacedDigit())
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 6)
+                        .background(.ultraThinMaterial, in: Capsule())
+                        .fixedSize()
+                        .offset(x: min(max(0, width * fraction(current) - 28), max(0, width - 64)), y: -34)
+                        .transition(.scale(scale: 0.6, anchor: .bottom).combined(with: .opacity))
+                }
+            }
             .frame(maxHeight: .infinity)
             .contentShape(Rectangle())
             .gesture(

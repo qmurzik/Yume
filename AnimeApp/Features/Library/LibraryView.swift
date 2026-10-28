@@ -11,26 +11,43 @@ struct LibraryView: View {
     @EnvironmentObject private var library: LibraryStore
     @State private var tab: Tab = .favorites
     @State private var confirmClear = false
+    @State private var showSettings = false
     @Namespace private var tabNamespace
 
     private let columns = [GridItem(.adaptive(minimum: 106, maximum: 170), spacing: 14, alignment: .top)]
 
     var body: some View {
-        NavigationStack {
+        ZoomNavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
                     stats
                     tabSwitcher
-                    switch tab {
-                    case .favorites: favorites
-                    case .history: history
+                    Group {
+                        switch tab {
+                        case .favorites: favorites
+                        case .history: history
+                        }
                     }
+                    .id(tab)
+                    .transition(.asymmetric(
+                        insertion: .move(edge: tab == .history ? .trailing : .leading).combined(with: .opacity),
+                        removal: .opacity
+                    ))
                 }
                 .padding(.bottom, 24)
             }
             .screenBackground()
             .navigationTitle("Моё")
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button {
+                        showSettings = true
+                    } label: {
+                        Image(systemName: "gearshape.fill")
+                    }
+                    .foregroundStyle(.white)
+                    .accessibilityLabel("Настройки")
+                }
                 if tab == .history, !library.history.isEmpty {
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button("Очистить") { confirmClear = true }
@@ -38,11 +55,11 @@ struct LibraryView: View {
                     }
                 }
             }
+            .sheet(isPresented: $showSettings) { SettingsView() }
             .confirmationDialog("Очистить историю и прогресс просмотра?", isPresented: $confirmClear, titleVisibility: .visible) {
                 Button("Очистить", role: .destructive) { library.clearHistory() }
                 Button("Отмена", role: .cancel) {}
             }
-            .animeNavigation()
         }
     }
 
@@ -117,11 +134,12 @@ struct LibraryView: View {
             EmptyStateView(title: "В избранном пусто", message: "Нажмите ♡ на странице тайтла, чтобы добавить его сюда.", systemImage: "heart")
         } else {
             LazyVGrid(columns: columns, spacing: 20) {
-                ForEach(items, id: \.anime.id) { entry in
-                    NavigationLink(value: AnimeRoute(id: entry.anime.id)) {
-                        SavedAnimeCard(anime: entry.anime)
+                ForEach(Array(items.enumerated()), id: \.element.anime.id) { index, entry in
+                    NavigationLink(value: AnimeRoute(id: entry.anime.id, zoomID: "fav-\(entry.anime.id)")) {
+                        SavedAnimeCard(anime: entry.anime, zoomID: "fav-\(entry.anime.id)")
                     }
                     .buttonStyle(PressableStyle())
+                    .appear(index)
                     .contextMenu {
                         Button(role: .destructive) {
                             library.toggleFavorite(entry.anime)
@@ -142,11 +160,13 @@ struct LibraryView: View {
             EmptyStateView(title: "История пуста", message: "Здесь появятся тайтлы, которые вы начали смотреть.", systemImage: "clock.arrow.circlepath")
         } else {
             LazyVStack(spacing: 10) {
-                ForEach(records) { record in
-                    NavigationLink(value: AnimeRoute(id: record.anime.id)) {
+                ForEach(Array(records.enumerated()), id: \.element.id) { index, record in
+                    NavigationLink(value: AnimeRoute(id: record.anime.id, zoomID: "history-\(record.anime.id)")) {
                         HistoryRow(record: record, watchedCount: library.progress(animeID: record.anime.id).values.filter(\.isWatched).count)
+                            .zoomSource("history-\(record.anime.id)")
                     }
                     .buttonStyle(PressableStyle(scale: 0.98))
+                    .appear(index)
                     .contextMenu {
                         Button(role: .destructive) {
                             library.removeFromHistory(record.anime.id)

@@ -10,9 +10,9 @@ final class AnimeDetailViewModel: ObservableObject {
     @Published private(set) var episodesState: Loadable<[SourceEpisode]> = .idle
     @Published var voice: String?
 
-    let availableSources: [SourceID]
-    /// Sources switched off in this build, e.g. YummyAnime without an application key.
-    let disabledSources: [SourceID]
+    @Published private(set) var availableSources: [SourceID]
+    /// Sources switched off, e.g. YummyAnime until the user signs in.
+    @Published private(set) var disabledSources: [SourceID]
     /// Sources already checked that don't have this title.
     @Published private(set) var missingIn: [SourceID] = []
     private let services: AppServices
@@ -92,6 +92,20 @@ final class AnimeDetailViewModel: ObservableObject {
             similar = .idle
         } catch {
             similar = .failed(error)
+        }
+    }
+
+    /// Picks up sources enabled meanwhile (signing in to YummyAnime) and retries if nothing was found.
+    func refreshSources() {
+        let available = services.sources.available.map(\.id)
+        guard available != availableSources else { return }
+        let added = available.filter { !availableSources.contains($0) }
+        availableSources = available
+        disabledSources = services.sources.sources.filter { !$0.isAvailable }.map(\.id)
+        if case .failed(let error) = episodesState, error.isNotFound, let first = added.first {
+            sourceID = first
+            sourceTask?.cancel()
+            sourceTask = Task { await loadEpisodes() }
         }
     }
 

@@ -11,6 +11,8 @@ struct PlayerScreen: View {
     @State private var seekBubble: SeekBubble?
     @State private var fillScreen = false
     @State private var isLandscape = false
+    @State private var isLocked = false
+    @State private var dragOffset: CGFloat = 0
 
     private struct SeekBubble: Equatable {
         let forward: Bool
@@ -91,8 +93,10 @@ struct PlayerScreen: View {
 
             gestureLayer
 
-            if controlsVisible {
-                controls.transition(.opacity)
+            if isLocked {
+                lockedOverlay
+            } else if controlsVisible {
+                controls.transition(.opacity.combined(with: .scale(scale: 1.03)))
             }
 
             if let bubble = seekBubble {
@@ -107,7 +111,10 @@ struct PlayerScreen: View {
                 nextEpisodeCard(next)
             }
         }
-        .animation(.easeInOut(duration: 0.2), value: controlsVisible)
+        .offset(y: dragOffset)
+        .scaleEffect(1 - min(dragOffset, 400) / 2000)
+        .animation(.easeInOut(duration: 0.25), value: controlsVisible)
+        .animation(Motion.snappy, value: isLocked)
         .animation(.spring(response: 0.35, dampingFraction: 0.85), value: model.canSkipOpening)
         .animation(.spring(response: 0.35, dampingFraction: 0.85), value: model.autoplayCountdown != nil || model.didFinish)
     }
@@ -119,6 +126,44 @@ struct PlayerScreen: View {
             tapZone(forward: true)
         }
         .ignoresSafeArea()
+        // Swipe down to close, like a sheet.
+        .simultaneousGesture(
+            DragGesture(minimumDistance: 24)
+                .onChanged { value in
+                    guard !isLocked, !isLandscape, value.translation.height > 0,
+                          abs(value.translation.height) > abs(value.translation.width) else { return }
+                    dragOffset = value.translation.height
+                }
+                .onEnded { value in
+                    if dragOffset > 140 || value.predictedEndTranslation.height > 420 {
+                        Haptics.tap()
+                        dismiss()
+                    } else {
+                        withAnimation(Motion.spring) { dragOffset = 0 }
+                    }
+                }
+        )
+    }
+
+    private var lockedOverlay: some View {
+        VStack {
+            Spacer()
+            Button {
+                Haptics.success()
+                isLocked = false
+                controlsVisible = true
+                scheduleHide()
+            } label: {
+                Label("Разблокировать", systemImage: "lock.open.fill")
+                    .font(.subheadline.weight(.semibold))
+                    .padding(.horizontal, 18)
+                    .padding(.vertical, 12)
+                    .background(.ultraThinMaterial, in: Capsule())
+            }
+            .foregroundStyle(.white)
+            .padding(.bottom, 40)
+        }
+        .transition(.opacity)
     }
 
     private func tapZone(forward: Bool) -> some View {
@@ -126,8 +171,8 @@ struct PlayerScreen: View {
             .contentShape(Rectangle())
             .gesture(
                 TapGesture(count: 2)
-                    .onEnded { doubleTapSeek(forward: forward) }
-                    .exclusively(before: TapGesture().onEnded { toggleControls() })
+                    .onEnded { if !isLocked { doubleTapSeek(forward: forward) } }
+                    .exclusively(before: TapGesture().onEnded { if !isLocked { toggleControls() } })
             )
     }
 
@@ -178,6 +223,11 @@ struct PlayerScreen: View {
             }
             .foregroundStyle(.white)
             Spacer(minLength: 8)
+            iconButton("lock.fill", label: "Заблокировать управление") {
+                Haptics.success()
+                isLocked = true
+                controlsVisible = false
+            }
             AirPlayButton().frame(width: 36, height: 36)
             if model.isPictureInPicturePossible {
                 iconButton(model.isPictureInPictureActive ? "pip.exit" : "pip.enter", label: "Картинка в картинке") {
@@ -254,11 +304,15 @@ struct PlayerScreen: View {
                         Image(systemName: model.isPlaying ? "pause.fill" : "play.fill")
                             .font(.system(size: 32, weight: .bold))
                             .offset(x: model.isPlaying ? 0 : 3)
+                            .id(model.isPlaying)
+                            .transition(.scale(scale: 0.5).combined(with: .opacity))
                     }
                 }
             }
             .buttonStyle(PressableStyle(scale: 0.9))
             .foregroundStyle(.white)
+            .animation(.spring(response: 0.3, dampingFraction: 0.6), value: model.isPlaying)
+            .animation(Motion.fade, value: model.isBuffering)
             .accessibilityLabel(model.isPlaying ? "Пауза" : "Смотреть")
             transportButton("goforward.10", size: 28, label: "Вперёд на 10 секунд") { model.skip(by: 10) }
             transportButton("forward.end.fill", size: 22, enabled: model.hasNext, label: "Следующая серия") { model.playNext() }
@@ -406,6 +460,8 @@ struct PlayerScreen: View {
             .foregroundStyle(.white)
             .frame(width: 120, height: 120)
             .background(Color.white.opacity(0.12), in: Circle())
+            .id(bubble.seconds)
+            .transition(.scale(scale: 0.7).combined(with: .opacity))
             .padding(.horizontal, 40)
             if !bubble.forward { Spacer() }
         }
@@ -469,11 +525,13 @@ struct PlayerScreen: View {
     private func doubleTapSeek(forward: Bool) {
         Haptics.tap()
         model.skip(by: forward ? 10 : -10)
-        if var bubble = seekBubble, bubble.forward == forward {
-            bubble.seconds += 10
-            seekBubble = bubble
-        } else {
-            seekBubble = SeekBubble(forward: forward, seconds: 10)
+        withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+            if var bubble = seekBubble, bubble.forward == forward {
+                bubble.seconds += 10
+                seekBubble = bubble
+            } else {
+                seekBubble = SeekBubble(forward: forward, seconds: 10)
+            }
         }
         let current = seekBubble?.id
         Task {
