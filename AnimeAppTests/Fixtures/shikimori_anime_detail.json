@@ -1,0 +1,239 @@
+{
+ "data": {
+  "animes": [
+   {
+    "id": "52991",
+    "malId": "52991",
+    "name": "Sousou no Frieren",
+    "russian": "Провожающая в последний путь Фрирен",
+    "english": "Frieren: Beyond Journey's End",
+    "japanese": "葬送のフリーレン",
+    "synonyms": [
+     "Фрирен, провожающая в последний путь",
+     "Frieren at the Funeral"
+    ],
+    "kind": "tv",
+    "score": 9.25,
+    "status": "released",
+    "episodes": 28,
+    "episodesAired": 27,
+    "duration": 24,
+    "airedOn": {
+     "year": 2023,
+     "month": 9,
+     "day": 29,
+     "date": "2023-09-29"
+    },
+    "releasedOn": {
+     "year": 2024,
+     "date": "2024-03-22"
+    },
+    "season": "fall_2023",
+    "nextEpisodeAt": null,
+    "rating": "pg_13",
+    "poster": {
+     "id": "712058",
+     "originalUrl": "https://shikimori.io/uploads/poster/animes/52991/dc841cc9fce2aa1e9907a4b61c5d1d92.jpeg",
+     "mainUrl": "https://shikimori.io/uploads/poster/animes/52991/main-d1e1c7c50f69eee9033229dcdfda5e23.webp",
+     "main2xUrl": "https://shikimori.io/uploads/poster/animes/52991/main_2x-83b82e9ff64f1b0821239f88ab8651ab.webp",
+     "previewUrl": "https://shikimori.io/uploads/poster/animes/52991/preview-28cde2ca2872d414e42f772750490e4c.webp",
+     "preview2xUrl": "https://shikimori.io/uploads/poster/animes/52991/preview_2x-7b094101836fbd352a82a322d6298f47.webp"
+    },
+    "genres": [
+     {
+      "id": "27",
+      "name": "Shounen",
+      "russian": "Сёнен",
+      "kind": "demographic"
+     },
+     {
+      "id": "2",
+      "name": "Adventure",
+      "russian": "Приключения",
+      "kind": "genre"
+     },
+     {
+      "id": "8",
+      "name": "Drama",
+      "russian": "Драма",
+      "kind": "genre"
+     },
+     {
+      "id": "10",
+      "name": "Fantasy",
+      "russian": "Фэнтези",
+      "kind": "genre"
+     },
+     {
+      "id": "114",
+      "name": "Award Winning",
+      "russian": "Удостоено наград",
+      "kind": "theme"
+     }
+    ],
+    "studios": [
+     {
+      "id": "11",
+      "name": "Madhouse"
+     }
+    ],
+    "description": "Отряд героя [character=186854]Химмеля[/character] вернулся домой.",
+    "related": [
+     {
+      "relationKind": "sequel",
+      "relationText": "Продолжение",
+      "anime": {
+       "id": "59978",
+       "name": "Sousou no Frieren 2nd Season",
+       "russian": "Провожающая в последний путь Фрирен 2",
+       "poster": {
+        "mainUrl": "https://shikimori.io/uploads/poster/animes/59978/main-0565944a400ae237d2596b0e22d59aa3.webp"
+       },
+       "kind": "tv",
+       "airedOn": {
+        "year": 2026
+       }
+      }
+     },
+     {
+      "relationKind": "adaptation",
+      "relationText": "Адаптация",
+      "anime": null
+     },
+     {
+      "relationKind": "side_story",
+      "relationText": "Другая история",
+      "anime": {
+       "id": "56885",
+       "name": "Sousou no Frieren: ●● no Mahou",
+       "russian": "Провожающая в последний путь Фрирен: Магия ●●",
+       "poster": {
+        "mainUrl": "https://shikimori.io/uploads/poster/animes/56885/main-e692b25eaafdf286f7a2edaec1b8e35b.webp"
+       },
+       "kind": "ona",
+       "airedOn": {
+        "year": 2023
+       }
+      }
+     },
+     {
+      "relationKind": "other",
+      "relationText": "Прочее",
+      "anime": {
+       "id": "56805",
+       "name": "Yuusha",
+       "russian": "Герой",
+       "poster": {
+        "mainUrl": "https://shikimori.io/uploads/poster/animes/56805/main-f58c0b0db9c95bb171165161e976b1b4.webp"
+       },
+       "kind": "music",
+       "airedOn": {
+        "year": 2023
+       }
+      }
+     },
+     {
+      "relationKind": "other",
+      "relationText": "Прочее",
+      "anime": {
+       "id": "58313",
+       "name": "Haru (2024)",
+       "russian": "Солнечный",
+       "poster": {
+        "mainUrl": "https://shikimori.io/uploads/poster/animes/58313/main-3294544fb2527114a8fa836e4b7f8416.webp"
+       },
+       "kind": "music",
+       "airedOn": {
+        "year": 2024
+       }
+      }
+     }
+    ]
+   },
+   {
+    "id": "56885",
+    "malId": "56885",
+    "name": "Sousou no Frieren: ●● no Mahou",
+    "russian": "Провожающая в последний путь Фрирен: Магия ●●",
+    "english": "Frieren: Beyond Journey's End Mini Anime",
+    "japanese": "葬送のフリーレン ～●●の魔法～",
+    "synonyms": [
+     "Провожающая в последний путь Фрирен: Мини-аниме",
+     "Sousou no Frieren: ●● no Mahou Part 2"
+    ],
+    "kind": "ona",
+    "score": 7.36,
+    "status": "released",
+    "episodes": 24,
+    "episodesAired": 23,
+    "duration": 1,
+    "airedOn": {
+     "year": 2023,
+     "month": 10,
+     "day": 11,
+     "date": "2023-10-11"
+    },
+    "releasedOn": {
+     "year": 2026,
+     "date": "2026-05-22"
+    },
+    "season": null,
+    "nextEpisodeAt": null,
+    "rating": "pg_13",
+    "poster": {
+     "id": "771279",
+     "originalUrl": "https://shikimori.io/uploads/poster/animes/56885/e91ea1cc0a97d131a60efe2243d45281.jpeg",
+     "mainUrl": "https://shikimori.io/uploads/poster/animes/56885/main-e692b25eaafdf286f7a2edaec1b8e35b.webp",
+     "main2xUrl": "https://shikimori.io/uploads/poster/animes/56885/main_2x-31f94ddff85c31bf58374a3d8208ee7e.webp",
+     "previewUrl": "https://shikimori.io/uploads/poster/animes/56885/preview-325b0eca07e6f6c91985c973b10cb1ac.webp",
+     "preview2xUrl": "https://shikimori.io/uploads/poster/animes/56885/preview_2x-2350296e790429ee426aca085b37f161.webp"
+    },
+    "genres": [
+     {
+      "id": "27",
+      "name": "Shounen",
+      "russian": "Сёнен",
+      "kind": "demographic"
+     },
+     {
+      "id": "4",
+      "name": "Comedy",
+      "russian": "Комедия",
+      "kind": "genre"
+     },
+     {
+      "id": "10",
+      "name": "Fantasy",
+      "russian": "Фэнтези",
+      "kind": "genre"
+     }
+    ],
+    "studios": [
+     {
+      "id": "2705",
+      "name": "TOHO animation STUDIO"
+     }
+    ],
+    "description": "Отряд героя [character=186854]Химмеля[/character] вернулся домой.",
+    "related": [
+     {
+      "relationKind": "parent_story",
+      "relationText": "Изначальная история",
+      "anime": {
+       "id": "52991",
+       "name": "Sousou no Frieren",
+       "russian": "Провожающая в последний путь Фрирен",
+       "poster": {
+        "mainUrl": "https://shikimori.io/uploads/poster/animes/52991/main-d1e1c7c50f69eee9033229dcdfda5e23.webp"
+       },
+       "kind": "tv",
+       "airedOn": {
+        "year": 2023
+       }
+      }
+     }
+    ]
+   }
+  ]
+ }
+}

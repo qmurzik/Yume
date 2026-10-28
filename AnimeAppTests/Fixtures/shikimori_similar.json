@@ -1,0 +1,78 @@
+[
+ {
+  "id": 33352,
+  "name": "Violet Evergarden",
+  "russian": "Вайолет Эвергарден",
+  "image": {
+   "original": "/system/animes/original/33352.jpg?1711979744",
+   "preview": "/system/animes/preview/33352.jpg?1711979744",
+   "x96": "/system/animes/x96/33352.jpg?1711979744",
+   "x48": "/system/animes/x48/33352.jpg?1711979744"
+  },
+  "url": "/animes/33352-violet-evergarden",
+  "kind": "tv",
+  "score": "8.69",
+  "status": "released",
+  "episodes": 13,
+  "episodes_aired": 13,
+  "aired_on": "2018-01-11",
+  "released_on": "2018-04-05"
+ },
+ {
+  "id": 41025,
+  "name": "Fumetsu no Anata e",
+  "russian": "Для тебя, Бессмертный",
+  "image": {
+   "original": "/system/animes/original/41025.jpg?1711949831",
+   "preview": "/system/animes/preview/41025.jpg?1711949831",
+   "x96": "/system/animes/x96/41025.jpg?1711949831",
+   "x48": "/system/animes/x48/41025.jpg?1711949831"
+  },
+  "url": "/animes/41025-fumetsu-no-anata-e",
+  "kind": "tv",
+  "score": "8.35",
+  "status": "released",
+  "episodes": 20,
+  "episodes_aired": 20,
+  "aired_on": "2021-04-12",
+  "released_on": "2021-08-30"
+ },
+ {
+  "id": 35851,
+  "name": "Sayonara no Asa ni Yakusoku no Hana wo Kazarou",
+  "russian": "Укрась прощальное утро цветами обещания",
+  "image": {
+   "original": "/system/animes/original/35851.jpg?1711972143",
+   "preview": "/system/animes/preview/35851.jpg?1711972143",
+   "x96": "/system/animes/x96/35851.jpg?1711972143",
+   "x48": "/system/animes/x48/35851.jpg?1711972143"
+  },
+  "url": "/animes/35851-sayonara-no-asa-ni-yakusoku-no-hana-wo-kazarou",
+  "kind": "movie",
+  "score": "8.4",
+  "status": "released",
+  "episodes": 1,
+  "episodes_aired": 1,
+  "aired_on": "2018-02-24",
+  "released_on": null
+ },
+ {
+  "id": 52701,
+  "name": "Dungeon Meshi",
+  "russian": "Подземелье вкусностей",
+  "image": {
+   "original": "/system/animes/original/52701.jpg?1717859891",
+   "preview": "/system/animes/preview/52701.jpg?1717859891",
+   "x96": "/system/animes/x96/52701.jpg?1717859891",
+   "x48": "/system/animes/x48/52701.jpg?1717859891"
+  },
+  "url": "/animes/52701-dungeon-meshi",
+  "kind": "tv",
+  "score": "8.59",
+  "status": "released",
+  "episodes": 24,
+  "episodes_aired": 24,
+  "aired_on": "2024-01-04",
+  "released_on": "2024-06-13"
+ }
+]

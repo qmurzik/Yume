@@ -1,0 +1,61 @@
+{
+ "id": "9a416b99-4487-4d8a-960a-461089d36cad",
+ "name": "«Конец приключений»",
+ "ordinal": 1,
+ "opening": {
+  "stop": null,
+  "start": null
+ },
+ "ending": {
+  "stop": null,
+  "start": null
+ },
+ "preview": {
+  "src": "/storage/releases/episodes/previews/9542/1/DMzcnlKyg89dRv5f.jpg",
+  "preview": "/storage/releases/episodes/previews/9542/1/DMzcnlKyg89dRv5f.jpg",
+  "thumbnail": "/storage/releases/episodes/previews/9542/1/DMzcnlKyg89dRv5f__efc299f1abad3127e768212d6e89931f.jpg",
+  "optimized": {
+   "src": "/storage/releases/episodes/previews/9542/1/DMzcnlKyg89dRv5f__6b90fb1dc2906687d55f1260c7d9be53.webp",
+   "preview": "/storage/releases/episodes/previews/9542/1/DMzcnlKyg89dRv5f__6b90fb1dc2906687d55f1260c7d9be53.webp",
+   "thumbnail": "/storage/releases/episodes/previews/9542/1/DMzcnlKyg89dRv5f__977341421ce8c81ba04c8b2abb040ee3.webp"
+  }
+ },
+ "hls_480": "https://cache.libria.fun/videos/media/ts/9542/1/480/5db9e319abbbe3039f3c5985505f7854.m3u8?countryIso=US&isAuthorized=0&isWithVideoAds=1&isWithVideoAdsAlways=1",
+ "hls_720": "https://cache.libria.fun/videos/media/ts/9542/1/720/f2dc34029cefbeb93e9fbb4c5cfbfa5d.m3u8?countryIso=US&isAuthorized=0&isWithVideoAds=1&isWithVideoAdsAlways=1",
+ "hls_1080": "https://cache.libria.fun/videos/media/ts/9542/1/1080/aa675e5f3fe5b528517d812182344011.m3u8?countryIso=US&isAuthorized=0&isWithVideoAds=1&isWithVideoAdsAlways=1",
+ "duration": 1560,
+ "rutube_id": null,
+ "youtube_id": null,
+ "updated_at": "2023-11-25T10:29:08+00:00",
+ "sort_order": 1,
+ "release_id": 9542,
+ "name_english": null,
+ "release": {
+  "id": 9542,
+  "type": {
+   "value": "TV",
+   "description": "ТВ"
+  },
+  "year": 2023,
+  "name": {
+   "main": "Провожающая в последний путь Фрирен",
+   "english": "Sousou no Frieren",
+   "alternative": null
+  },
+  "alias": "sousou-no-frieren",
+  "shikimori": {
+   "id": 52991,
+   "url": "https://shikimori.io/animes/52991",
+   "votes": 71796,
+   "rating": 8.84
+  },
+  "mal": {
+   "id": 52991,
+   "url": "https://myanimelist.net/anime/52991",
+   "votes": 947608,
+   "rating": 9.24
+  },
+  "is_ongoing": false,
+  "episodes_total": 28
+ }
+}

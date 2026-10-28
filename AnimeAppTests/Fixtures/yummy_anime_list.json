@@ -1,0 +1,114 @@
+{
+ "response": [
+  {
+   "description": "Одержав победу над Королём демонов, отряд героя Химмеля верн…",
+   "poster": {
+    "fullsize": "//static.yani.tv/posters/full/1636668991.jpg",
+    "big": "//static.yani.tv/posters/big/1636668991.webp",
+    "small": "//static.yani.tv/posters/small/1636668991.webp",
+    "medium": "//static.yani.tv/posters/medium/1636668991.webp",
+    "huge": "//static.yani.tv/posters/huge/1636668991.avif",
+    "mega": "//static.yani.tv/posters/mega/1636668991.avif"
+   },
+   "title": "Провожающая в последний путь Фрирен",
+   "anime_url": "provozhayushchaya-posledniy-put-friren",
+   "anime_id": 10661,
+   "rating": {
+    "average": 8.98631626608723,
+    "counters": 11035,
+    "kp_rating": 8.7,
+    "anidub_rating": 0,
+    "myanimelist_rating": 9.24,
+    "worldart_rating": 8.8,
+    "shikimori_rating": 8.85906143012219
+   },
+   "genres": [
+    {
+     "title": "Сёнэн",
+     "url": "/catalog/category/senen",
+     "id": 8,
+     "alias": "senen"
+    },
+    {
+     "title": "Драма",
+     "url": "/catalog/category/drama",
+     "id": 15,
+     "alias": "drama"
+    },
+    {
+     "title": "Приключения",
+     "url": "/catalog/category/priklyucheniya",
+     "id": 32,
+     "alias": "priklyucheniya"
+    },
+    {
+     "title": "Фэнтези",
+     "url": "/catalog/category/fentezi",
+     "id": 42,
+     "alias": "fentezi"
+    },
+    {
+     "title": "Магия",
+     "url": "/catalog/category/magiya",
+     "id": 51,
+     "alias": "magiya"
+    },
+    {
+     "title": "Целый фэнтези мир",
+     "url": "/catalog/category/celyj-fentezi-mir",
+     "id": 59,
+     "alias": "celyj-fentezi-mir"
+    },
+    {
+     "title": "Эльфы",
+     "url": "/catalog/category/el-fy",
+     "id": 60,
+     "alias": "el-fy"
+    },
+    {
+     "title": "Повседневность",
+     "url": "/catalog/category/povsednevnost",
+     "id": 86,
+     "alias": "povsednevnost"
+    }
+   ],
+   "year": 2023,
+   "min_age": {
+    "value": 3,
+    "title_long": "PG-13 (от 13 лет)",
+    "title": "PG-13"
+   },
+   "views": 4059051,
+   "season": 4,
+   "anime_status": {
+    "value": 0,
+    "title": "вышел",
+    "alias": "released",
+    "class": ""
+   },
+   "type": {
+    "name": "Сериал",
+    "value": 1,
+    "shortname": "ТВ",
+    "alias": "tv"
+   },
+   "remote_ids": {
+    "worldart_id": 11466,
+    "shikimori_id": 52991,
+    "anidub_id": 0,
+    "anilibria_alias": "sousou-no-frieren",
+    "myanimelist_id": 52991,
+    "kp_id": 5401195,
+    "worldart_type": "animation",
+    "sr_id": 1459
+   },
+   "top": {
+    "category": 17,
+    "global": 24
+   },
+   "blocked_in": [
+    ""
+   ]
+  }
+ ]
+}

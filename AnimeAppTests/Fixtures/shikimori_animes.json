@@ -1,0 +1,216 @@
+{
+ "data": {
+  "animes": [
+   {
+    "id": "21",
+    "malId": "21",
+    "name": "One Piece",
+    "russian": "Ван-Пис",
+    "english": "One Piece",
+    "japanese": "ONE PIECE",
+    "synonyms": [
+     "Большой куш",
+     "Одним куском"
+    ],
+    "kind": "tv",
+    "score": 8.72,
+    "status": "ongoing",
+    "episodes": 0,
+    "episodesAired": 1180,
+    "duration": 24,
+    "airedOn": {
+     "year": 1999,
+     "month": 10,
+     "day": 20,
+     "date": "1999-10-20"
+    },
+    "season": "fall_1999",
+    "nextEpisodeAt": "2026-11-01T17:15:00+03:00",
+    "rating": "pg_13",
+    "poster": {
+     "originalUrl": "https://shikimori.io/uploads/poster/animes/21/75a07947be55983ce14917f57e96555f.jpeg",
+     "mainUrl": "https://shikimori.io/uploads/poster/animes/21/main-20e20e4183f9fa248e09c279da6df387.webp",
+     "main2xUrl": "https://shikimori.io/uploads/poster/animes/21/main_2x-b1941a9ef635ee25079ff341b59409c7.webp",
+     "previewUrl": "https://shikimori.io/uploads/poster/animes/21/preview-6784488f1b487d2b19ee8f9ce42e7e85.webp",
+     "preview2xUrl": "https://shikimori.io/uploads/poster/animes/21/preview_2x-679310ccb0e536a79d1037131688b107.webp"
+    },
+    "genres": [
+     {
+      "id": "27",
+      "name": "Shounen",
+      "russian": "Сёнен",
+      "kind": "demographic"
+     },
+     {
+      "id": "1",
+      "name": "Action",
+      "russian": "Экшен",
+      "kind": "genre"
+     },
+     {
+      "id": "2",
+      "name": "Adventure",
+      "russian": "Приключения",
+      "kind": "genre"
+     },
+     {
+      "id": "10",
+      "name": "Fantasy",
+      "russian": "Фэнтези",
+      "kind": "genre"
+     }
+    ]
+   },
+   {
+    "id": "235",
+    "malId": "235",
+    "name": "Meitantei Conan",
+    "russian": "Детектив Конан",
+    "english": "Case Closed",
+    "japanese": "名探偵コナン",
+    "synonyms": [
+     "Detective Conan"
+    ],
+    "kind": "tv",
+    "score": 8.18,
+    "status": "ongoing",
+    "episodes": 0,
+    "episodesAired": 1217,
+    "duration": 24,
+    "airedOn": {
+     "year": 1996,
+     "month": 1,
+     "day": 8,
+     "date": "1996-01-08"
+    },
+    "season": "winter_1996",
+    "nextEpisodeAt": "2026-10-31T12:00:00+03:00",
+    "rating": "pg_13",
+    "poster": {
+     "originalUrl": "https://shikimori.io/uploads/poster/animes/235/888fd61952fdd8b6446cec36da268155.jpeg",
+     "mainUrl": "https://shikimori.io/uploads/poster/animes/235/main-c0912e67fd0d26243c5a1a347b95ed1b.webp",
+     "main2xUrl": "https://shikimori.io/uploads/poster/animes/235/main_2x-00d4a8a6a56400a4f5de1ef5a89caf63.webp",
+     "previewUrl": "https://shikimori.io/uploads/poster/animes/235/preview-4555b139c4de194e3a677fddf96431aa.webp",
+     "preview2xUrl": "https://shikimori.io/uploads/poster/animes/235/preview_2x-2e1e20a6427d7fd4798ccd266d2f099e.webp"
+    },
+    "genres": [
+     {
+      "id": "27",
+      "name": "Shounen",
+      "russian": "Сёнен",
+      "kind": "demographic"
+     },
+     {
+      "id": "2",
+      "name": "Adventure",
+      "russian": "Приключения",
+      "kind": "genre"
+     },
+     {
+      "id": "4",
+      "name": "Comedy",
+      "russian": "Комедия",
+      "kind": "genre"
+     },
+     {
+      "id": "7",
+      "name": "Mystery",
+      "russian": "Тайна",
+      "kind": "genre"
+     },
+     {
+      "id": "39",
+      "name": "Detective",
+      "russian": "Детектив",
+      "kind": "theme"
+     }
+    ]
+   },
+   {
+    "id": "61469",
+    "malId": "61469",
+    "name": "Steel Ball Run: JoJo no Kimyou na Bouken",
+    "russian": "Невероятное приключение ДжоДжо: Гонка «Стальной шар»",
+    "english": "Steel Ball Run: JoJo's Bizarre Adventure",
+    "japanese": "スティール・ボール・ラン ジョジョの奇妙な冒険",
+    "synonyms": [
+     "JoJo's Bizarre Adventure Part 7: Steel Ball Run",
+     "JoJo no Kimyou na Bouken Part 7: Steel Ball Run",
+     "SBR"
+    ],
+    "kind": "ona",
+    "score": 9.04,
+    "status": "ongoing",
+    "episodes": 0,
+    "episodesAired": 6,
+    "duration": 27,
+    "airedOn": {
+     "year": 2026,
+     "month": 3,
+     "day": 19,
+     "date": "2026-03-19"
+    },
+    "season": null,
+    "nextEpisodeAt": null,
+    "rating": "r",
+    "poster": {
+     "originalUrl": "https://shikimori.io/uploads/poster/animes/61469/b114b577e574ab981ce0cc8cfe4cec99.jpeg",
+     "mainUrl": "https://shikimori.io/uploads/poster/animes/61469/main-13212e055af3e5b3d88a2d7ef194ee76.webp",
+     "main2xUrl": "https://shikimori.io/uploads/poster/animes/61469/main_2x-b7051cbb425945774b2074b6bbc8972a.webp",
+     "previewUrl": "https://shikimori.io/uploads/poster/animes/61469/preview-0ae82210d90912809f7ed086c4b8162b.webp",
+     "preview2xUrl": "https://shikimori.io/uploads/poster/animes/61469/preview_2x-ad95513ff28235c2ef022b197d780008.webp"
+    },
+    "genres": [
+     {
+      "id": "42",
+      "name": "Seinen",
+      "russian": "Сэйнэн",
+      "kind": "demographic"
+     },
+     {
+      "id": "27",
+      "name": "Shounen",
+      "russian": "Сёнен",
+      "kind": "demographic"
+     },
+     {
+      "id": "1",
+      "name": "Action",
+      "russian": "Экшен",
+      "kind": "genre"
+     },
+     {
+      "id": "2",
+      "name": "Adventure",
+      "russian": "Приключения",
+      "kind": "genre"
+     },
+     {
+      "id": "7",
+      "name": "Mystery",
+      "russian": "Тайна",
+      "kind": "genre"
+     },
+     {
+      "id": "37",
+      "name": "Supernatural",
+      "russian": "Сверхъестественное",
+      "kind": "genre"
+     },
+     {
+      "id": "13",
+      "name": "Historical",
+      "russian": "Исторический",
+      "kind": "theme"
+     },
+     {
+      "id": "3",
+      "name": "Racing",
+      "russian": "Гонки",
+      "kind": "theme"
+     }
+    ]
+   }
+  ]
+ }
+}

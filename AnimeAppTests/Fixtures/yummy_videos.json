@@ -1,0 +1,161 @@
+{
+ "response": [
+  {
+   "video_id": 687384,
+   "data": {
+    "player": "Плеер Aksor",
+    "dubbing": "Озвучка AniLibria",
+    "player_id": 1
+   },
+   "author": {
+    "avatars": {
+     "small": "//static.yani.tv/img/no-photo.jpg",
+     "big": "//static.yani.tv/img/no-photo.jpg",
+     "full": "//static.yani.tv/img/no-photo.jpg"
+    },
+    "roles": []
+   },
+   "number": "1",
+   "date": 1726057905,
+   "iframe_url": "https://player.aksor.tv/video/36c45284528fe5b4f30a39d9f008d1b8",
+   "index": 1172,
+   "skips": {
+    "opening": null,
+    "ending": {
+     "time": 1456,
+     "length": 89
+    }
+   },
+   "views": 2286,
+   "duration": 1560
+  },
+  {
+   "video_id": 687385,
+   "data": {
+    "player": "Плеер Aksor",
+    "dubbing": "Озвучка AniLibria",
+    "player_id": 1
+   },
+   "author": {
+    "avatars": {
+     "small": "//static.yani.tv/img/no-photo.jpg",
+     "big": "//static.yani.tv/img/no-photo.jpg",
+     "full": "//static.yani.tv/img/no-photo.jpg"
+    },
+    "roles": []
+   },
+   "number": "2",
+   "date": 1726057905,
+   "iframe_url": "https://player.aksor.tv/video/0ca94c89d7abb7dc4eb8734718674cc7",
+   "index": 1173,
+   "skips": {
+    "opening": {
+     "time": 0,
+     "length": 89
+    },
+    "ending": {
+     "time": 1492,
+     "length": 59
+    }
+   },
+   "views": 905,
+   "duration": 1560
+  },
+  {
+   "video_id": 687386,
+   "data": {
+    "player": "Плеер Aksor",
+    "dubbing": "Озвучка AniLibria",
+    "player_id": 1
+   },
+   "author": {
+    "avatars": {
+     "small": "//static.yani.tv/img/no-photo.jpg",
+     "big": "//static.yani.tv/img/no-photo.jpg",
+     "full": "//static.yani.tv/img/no-photo.jpg"
+    },
+    "roles": []
+   },
+   "number": "3",
+   "date": 1726057905,
+   "iframe_url": "https://player.aksor.tv/video/0cbb4de454aed797cf6505acf75e2a5d",
+   "index": 1174,
+   "skips": {
+    "opening": {
+     "time": 0,
+     "length": 89
+    },
+    "ending": {
+     "time": 1367,
+     "length": 89
+    }
+   },
+   "views": 772,
+   "duration": 1470
+  },
+  {
+   "video_id": 577946,
+   "data": {
+    "player": "Плеер Kodik",
+    "dubbing": "Озвучка AniLibria",
+    "player_id": 4
+   },
+   "author": {
+    "avatars": {
+     "small": "//static.yani.tv/img/no-photo.jpg",
+     "big": "//static.yani.tv/img/no-photo.jpg",
+     "full": "//static.yani.tv/img/no-photo.jpg"
+    },
+    "roles": []
+   },
+   "number": "1",
+   "date": 1696086999,
+   "iframe_url": "//kodikplayer.com/season/94795/d5a209e95d68094e346175d7357ef0c7/720p?translations=false&only_episode=true&only_season=true&episode=1",
+   "index": 37,
+   "skips": {
+    "opening": {
+     "time": 0,
+     "length": 89
+    },
+    "ending": {
+     "time": 1453,
+     "length": 99
+    }
+   },
+   "views": 8563,
+   "duration": 1560
+  },
+  {
+   "video_id": 577947,
+   "data": {
+    "player": "Плеер Kodik",
+    "dubbing": "Озвучка AniLibria",
+    "player_id": 4
+   },
+   "author": {
+    "avatars": {
+     "small": "//static.yani.tv/img/no-photo.jpg",
+     "big": "//static.yani.tv/img/no-photo.jpg",
+     "full": "//static.yani.tv/img/no-photo.jpg"
+    },
+    "roles": []
+   },
+   "number": "2",
+   "date": 1696086999,
+   "iframe_url": "//kodikplayer.com/season/94795/d5a209e95d68094e346175d7357ef0c7/720p?translations=false&only_episode=true&only_season=true&episode=2",
+   "index": 38,
+   "skips": {
+    "opening": {
+     "time": 0,
+     "length": 89
+    },
+    "ending": {
+     "time": 1454,
+     "length": 89
+    }
+   },
+   "views": 6437,
+   "duration": 1560
+  }
+ ]
+}

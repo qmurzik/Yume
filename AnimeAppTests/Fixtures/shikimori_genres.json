@@ -1,0 +1,78 @@
+{
+ "data": {
+  "genres": [
+   {
+    "id": "27",
+    "name": "Shounen",
+    "russian": "Сёнен",
+    "kind": "demographic"
+   },
+   {
+    "id": "25",
+    "name": "Shoujo",
+    "russian": "Сёдзё",
+    "kind": "demographic"
+   },
+   {
+    "id": "42",
+    "name": "Seinen",
+    "russian": "Сэйнэн",
+    "kind": "demographic"
+   },
+   {
+    "id": "43",
+    "name": "Josei",
+    "russian": "Дзёсей",
+    "kind": "demographic"
+   },
+   {
+    "id": "15",
+    "name": "Kids",
+    "russian": "Детское",
+    "kind": "demographic"
+   },
+   {
+    "id": "7",
+    "name": "Mystery",
+    "russian": "Тайна",
+    "kind": "genre"
+   },
+   {
+    "id": "2",
+    "name": "Adventure",
+    "russian": "Приключения",
+    "kind": "genre"
+   },
+   {
+    "id": "4",
+    "name": "Comedy",
+    "russian": "Комедия",
+    "kind": "genre"
+   },
+   {
+    "id": "9",
+    "name": "Ecchi",
+    "russian": "Этти",
+    "kind": "genre"
+   },
+   {
+    "id": "10",
+    "name": "Fantasy",
+    "russian": "Фэнтези",
+    "kind": "genre"
+   },
+   {
+    "id": "14",
+    "name": "Horror",
+    "russian": "Ужасы",
+    "kind": "genre"
+   },
+   {
+    "id": "1",
+    "name": "Action",
+    "russian": "Экшен",
+    "kind": "genre"
+   }
+  ]
+ }
+}

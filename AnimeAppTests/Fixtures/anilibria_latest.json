@@ -1,0 +1,309 @@
+[
+ {
+  "id": 10363,
+  "type": {
+   "value": "TV",
+   "description": "ТВ"
+  },
+  "year": 2015,
+  "name": {
+   "main": "Мобильный воин Гандам: Железнокровные сироты",
+   "english": "Kidou Senshi Gundam: Tekketsu no Orphans",
+   "alternative": null
+  },
+  "alias": "kidou-senshi-gundam-tekketsu-no-orphans",
+  "season": {
+   "value": "autumn",
+   "description": "Осень"
+  },
+  "shikimori": {
+   "id": 31251,
+   "url": "https://shikimori.io/animes/31251",
+   "votes": null,
+   "rating": null
+  },
+  "mal": {
+   "id": 31251,
+   "url": "https://myanimelist.net/anime/31251",
+   "votes": 138066,
+   "rating": 8.07
+  },
+  "rating": {
+   "average": null,
+   "votes": 0,
+   "distribution": {
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0,
+    "6": 0,
+    "7": 0,
+    "8": 0,
+    "9": 0,
+    "10": 0
+   }
+  },
+  "poster": {
+   "src": "/storage/releases/posters/10363/h2Q1S9buNjinRQmGZHAD94SZr91u9nOV.jpg",
+   "preview": "/storage/releases/posters/10363/h2Q1S9buNjinRQmGZHAD94SZr91u9nOV.jpg",
+   "thumbnail": "/storage/releases/posters/10363/6KilPqNpyYiYjKvHcNfFNDxotW1qyho7.jpg",
+   "optimized": {
+    "src": "/storage/releases/posters/10363/Q8DxGhnQ8euMmGRSpmJfEV8bhSGfoV91.webp",
+    "preview": "/storage/releases/posters/10363/Q8DxGhnQ8euMmGRSpmJfEV8bhSGfoV91.webp",
+    "thumbnail": "/storage/releases/posters/10363/dBiRVcen0PDuxj64fuNjFx1PfB3NOs2m.webp"
+   }
+  },
+  "fresh_at": "2026-10-28T21:15:25+00:00",
+  "created_at": "2026-10-11T18:21:52+00:00",
+  "updated_at": "2026-10-28T20:48:19+00:00",
+  "is_ongoing": true,
+  "age_rating": {
+   "value": "R16_PLUS",
+   "label": "16+",
+   "is_adult": false,
+   "description": "Для людей, достигших возраста шестнадцати лет (16+)"
+  },
+  "publish_day": {
+   "value": 7,
+   "description": "Воскресенье"
+  },
+  "description": "Бедственная война — великое противостояние между Землей и ее…",
+  "notification": null,
+  "episodes_total": 25,
+  "external_player": null,
+  "is_in_production": true,
+  "is_blocked_by_geo": false,
+  "is_blocked_by_copyrights": false,
+  "is_comments_closed": false,
+  "comments_count": 0,
+  "added_in_users_favorites": 629,
+  "average_duration_of_episode": 24,
+  "added_in_planned_collection": 39,
+  "added_in_watched_collection": 7,
+  "added_in_watching_collection": 34,
+  "added_in_postponed_collection": 2,
+  "added_in_abandoned_collection": 3,
+  "genres": [
+   {
+    "id": 22,
+    "name": "Фантастика",
+    "image": {
+     "preview": "/storage/anime/genres/images/22/SkMfGTRw25vgROZYw2ckIFThCj6vieKr.jpg",
+     "thumbnail": "/storage/anime/genres/images/22/ITIPuxUQTOmgnVdrWsKsvpHILkKC8XKf.jpg",
+     "optimized": {
+      "preview": "/storage/anime/genres/images/22/eWMwlRJdiIp9AVbEBvc3uNoJtPoNZZtb.webp",
+      "thumbnail": "/storage/anime/genres/images/22/BsPOUSqL5Fmd8opLAAnnv8g9B86U3iyb.webp"
+     }
+    },
+    "total_releases": 272
+   },
+   {
+    "id": 8,
+    "name": "Драма",
+    "image": {
+     "preview": "/storage/anime/genres/images/8/zsAUP1RD6fLnJXMwTnH3awJNY0F3qlc3.jpg",
+     "thumbnail": "/storage/anime/genres/images/8/rQWlDbZpCDJroKwGrKMmCTAxjJ4gAsdQ.jpg",
+     "optimized": {
+      "preview": "/storage/anime/genres/images/8/xAYRsKLcdinBkDAPNaTPTw67CDx6C6y4.webp",
+      "thumbnail": "/storage/anime/genres/images/8/xL6iOX6aTj5swKxJdCPeucQnUc8Ka4ho.webp"
+     }
+    },
+    "total_releases": 365
+   }
+  ],
+  "latest_episode": {
+   "id": "a317a31d-c204-431f-ad61-325418a24323",
+   "name": null,
+   "ordinal": 3,
+   "opening": {
+    "stop": null,
+    "start": null
+   },
+   "ending": {
+    "stop": null,
+    "start": null
+   },
+   "preview": {
+    "src": "/storage/releases/episodes/previews/10363/3/kSAsirjBYmdvUyym.jpg",
+    "preview": "/storage/releases/episodes/previews/10363/3/kSAsirjBYmdvUyym.jpg",
+    "thumbnail": "/storage/releases/episodes/previews/10363/3/kSAsirjBYmdvUyym__f048a2daa60b53b629d42365c63b4e96.jpg",
+    "optimized": {
+     "src": "/storage/releases/episodes/previews/10363/3/kSAsirjBYmdvUyym__f19c0d7fad9a3563f7954882c6570ef9.webp",
+     "preview": "/storage/releases/episodes/previews/10363/3/kSAsirjBYmdvUyym__f19c0d7fad9a3563f7954882c6570ef9.webp",
+     "thumbnail": "/storage/releases/episodes/previews/10363/3/kSAsirjBYmdvUyym__edb0af5c590f5bd0fabd1fd72c6e5b60.webp"
+    }
+   },
+   "hls_480": "https://cache.libria.fun/videos/media/ts/10363/3/480/5cf1966442400b5519efe544b456f429.m3u8?countryIso=US&isAuthorized=0&isWithVideoAds=1&isWithVideoAdsAlways=1",
+   "hls_720": "https://cache.libria.fun/videos/media/ts/10363/3/720/f01efa09728da97385a721f370135998.m3u8?countryIso=US&isAuthorized=0&isWithVideoAds=1&isWithVideoAdsAlways=1",
+   "hls_1080": null,
+   "duration": 1468,
+   "rutube_id": null,
+   "youtube_id": null,
+   "updated_at": "2026-10-28T21:15:01+00:00",
+   "sort_order": 3,
+   "release_id": 10363,
+   "name_english": null
+  }
+ },
+ {
+  "id": 10335,
+  "type": {
+   "value": "TV",
+   "description": "ТВ"
+  },
+  "year": 2026,
+  "name": {
+   "main": "Фантазии Речных заводей",
+   "english": "Gensou Suikoden",
+   "alternative": null
+  },
+  "alias": "gensou-suikoden",
+  "season": {
+   "value": "autumn",
+   "description": "Осень"
+  },
+  "shikimori": {
+   "id": 61140,
+   "url": "https://shikimori.io/animes/61140",
+   "votes": 59,
+   "rating": 7.64
+  },
+  "mal": {
+   "id": 61140,
+   "url": "https://myanimelist.net/anime/61140",
+   "votes": 1084,
+   "rating": 6.61
+  },
+  "rating": {
+   "average": null,
+   "votes": 0,
+   "distribution": {
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "4": 0,
+    "5": 0,
+    "6": 0,
+    "7": 0,
+    "8": 0,
+    "9": 0,
+    "10": 0
+   }
+  },
+  "poster": {
+   "src": "/storage/releases/posters/10335/9WadTYt8UowBnJuYluhEp00kKqWd482t.jpg",
+   "preview": "/storage/releases/posters/10335/9WadTYt8UowBnJuYluhEp00kKqWd482t.jpg",
+   "thumbnail": "/storage/releases/posters/10335/rNgp0fseziU9hqNm1saYJuRXeTdDmhfx.jpg",
+   "optimized": {
+    "src": "/storage/releases/posters/10335/FG9D94u7A973Oli9wjTbx5jG47XM7g3M.webp",
+    "preview": "/storage/releases/posters/10335/FG9D94u7A973Oli9wjTbx5jG47XM7g3M.webp",
+    "thumbnail": "/storage/releases/posters/10335/OqLrQtF20zi6G9y4Ri3HlSUOKXNd7zFh.webp"
+   }
+  },
+  "fresh_at": "2026-10-28T19:32:39+00:00",
+  "created_at": "2026-08-18T22:58:34+00:00",
+  "updated_at": "2026-10-28T19:16:36+00:00",
+  "is_ongoing": true,
+  "age_rating": {
+   "value": "R16_PLUS",
+   "label": "16+",
+   "is_adult": false,
+   "description": "Для людей, достигших возраста шестнадцати лет (16+)"
+  },
+  "publish_day": {
+   "value": 3,
+   "description": "Среда"
+  },
+  "description": "Двое мальчишек, Ри‌лиу и его лучший друг Джоуи, служили в юн…",
+  "notification": null,
+  "episodes_total": null,
+  "external_player": null,
+  "is_in_production": true,
+  "is_blocked_by_geo": false,
+  "is_blocked_by_copyrights": false,
+  "is_comments_closed": false,
+  "comments_count": 0,
+  "added_in_users_favorites": 1781,
+  "average_duration_of_episode": null,
+  "added_in_planned_collection": 139,
+  "added_in_watched_collection": 2,
+  "added_in_watching_collection": 168,
+  "added_in_postponed_collection": 12,
+  "added_in_abandoned_collection": 20,
+  "genres": [
+   {
+    "id": 14,
+    "name": "Экшен",
+    "image": {
+     "preview": "/storage/anime/genres/images/14/HVxcEvm7oA6JQvnMKKgSdYJ90ab8Zoco.jpg",
+     "thumbnail": "/storage/anime/genres/images/14/7JeDltmth6vVUs1bG4OHq6ywRYVjbYoY.jpg",
+     "optimized": {
+      "preview": "/storage/anime/genres/images/14/FNZP4gLtDFe67Ynbthc08wRsTp5q94sx.webp",
+      "thumbnail": "/storage/anime/genres/images/14/gfzjNkJYPgeaIyQxXveaP5UblbQWadEF.webp"
+     }
+    },
+    "total_releases": 694
+   },
+   {
+    "id": 29,
+    "name": "Фэнтези",
+    "image": {
+     "preview": "/storage/anime/genres/images/29/BqPfwYPC7STQ0lsv6LsdyDm594Tnz2N5.jpg",
+     "thumbnail": "/storage/anime/genres/images/29/bkKObn59vWFAd8wcAPINJnI8EZLZB8gH.jpg",
+     "optimized": {
+      "preview": "/storage/anime/genres/images/29/BayKuKbzHQkKMlfFyUTZAoExCjqkHDfh.webp",
+      "thumbnail": "/storage/anime/genres/images/29/yVUCPUfGguBeZ280YyS5UhawlR3F1fS0.webp"
+     }
+    },
+    "total_releases": 619
+   },
+   {
+    "id": 27,
+    "name": "Приключения",
+    "image": {
+     "preview": "/storage/anime/genres/images/27/bcU7byqneZPf1E3qj3g94enAUtoRUr9A.jpg",
+     "thumbnail": "/storage/anime/genres/images/27/dkzAZJGJI45REJTjVMNAJXNi4wHo0AOS.jpg",
+     "optimized": {
+      "preview": "/storage/anime/genres/images/27/z4kgvrZz4JSSy0G1EtWBDSH1SA76Aex1.webp",
+      "thumbnail": "/storage/anime/genres/images/27/lEZNqdhonXq9BAejItNKgPTv1XLFbwdD.webp"
+     }
+    },
+    "total_releases": 455
+   }
+  ],
+  "latest_episode": {
+   "id": "a31785cc-23d6-4ca9-910c-9a2563784081",
+   "name": "Распутье",
+   "ordinal": 4,
+   "opening": {
+    "stop": 112,
+    "start": 22
+   },
+   "ending": {
+    "stop": 1431,
+    "start": 1341
+   },
+   "preview": {
+    "src": "/storage/releases/episodes/previews/10335/4/DPshtCKPYnxnrMur.jpg",
+    "preview": "/storage/releases/episodes/previews/10335/4/DPshtCKPYnxnrMur.jpg",
+    "thumbnail": "/storage/releases/episodes/previews/10335/4/DPshtCKPYnxnrMur__6e307505af48fa6f7022cdef14d3a89c.jpg",
+    "optimized": {
+     "src": "/storage/releases/episodes/previews/10335/4/DPshtCKPYnxnrMur__133b0cdc088f1d26dd96ef2742bfb4fa.webp",
+     "preview": "/storage/releases/episodes/previews/10335/4/DPshtCKPYnxnrMur__133b0cdc088f1d26dd96ef2742bfb4fa.webp",
+     "thumbnail": "/storage/releases/episodes/previews/10335/4/DPshtCKPYnxnrMur__3c57868b9d4347b50a7d8e96afd9b45b.webp"
+    }
+   },
+   "hls_480": "https://cache.libria.fun/videos/media/ts/10335/4/480/65feeab2bd1a42512bbddd56919f513c.m3u8?countryIso=US&isAuthorized=0&isWithVideoAds=1&isWithVideoAdsAlways=1",
+   "hls_720": "https://cache.libria.fun/videos/media/ts/10335/4/720/a071e9a502f584b111ae54b522c4e3ed.m3u8?countryIso=US&isAuthorized=0&isWithVideoAds=1&isWithVideoAdsAlways=1",
+   "hls_1080": "https://cache.libria.fun/videos/media/ts/10335/4/1080/c17cd95bbbb817998c5a325e01459df5.m3u8?countryIso=US&isAuthorized=0&isWithVideoAds=1&isWithVideoAdsAlways=1",
+   "duration": 1440,
+   "rutube_id": null,
+   "youtube_id": null,
+   "updated_at": "2026-10-28T19:39:45+00:00",
+   "sort_order": 4,
+   "release_id": 10335,
+   "name_english": null
+  }
+ }
+]

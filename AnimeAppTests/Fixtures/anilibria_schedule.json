@@ -1,0 +1,463 @@
+[
+ {
+  "release": {
+   "id": 8452,
+   "type": {
+    "value": "TV",
+    "description": "ТВ"
+   },
+   "year": 2004,
+   "name": {
+    "main": "Блич",
+    "english": "Bleach",
+    "alternative": "отбеливатель, белизна, bleach"
+   },
+   "alias": "bleach",
+   "season": {
+    "value": "autumn",
+    "description": "Осень"
+   },
+   "shikimori": {
+    "id": 269,
+    "url": "https://shikimori.io/animes/269",
+    "votes": 67229,
+    "rating": 8.26
+   },
+   "mal": {
+    "id": 269,
+    "url": "https://myanimelist.net/anime/269",
+    "votes": 1290574,
+    "rating": 8
+   },
+   "rating": {
+    "average": null,
+    "votes": 0,
+    "distribution": {
+     "1": 0,
+     "2": 0,
+     "3": 0,
+     "4": 0,
+     "5": 0,
+     "6": 0,
+     "7": 0,
+     "8": 0,
+     "9": 0,
+     "10": 0
+    }
+   },
+   "poster": {
+    "src": "/storage/releases/posters/8452/bJotddCEwNlavuWUX6yUPCCP173Nxc8e.jpg",
+    "preview": "/storage/releases/posters/8452/bJotddCEwNlavuWUX6yUPCCP173Nxc8e.jpg",
+    "thumbnail": "/storage/releases/posters/8452/TZmbgSnfXHEjQaeu3yDVkbNVWUs93Wc9.jpg",
+    "optimized": {
+     "src": "/storage/releases/posters/8452/RN4oqgBiCnFwJHQCJ5JE8ZJuvNbioxQa.webp",
+     "preview": "/storage/releases/posters/8452/RN4oqgBiCnFwJHQCJ5JE8ZJuvNbioxQa.webp",
+     "thumbnail": "/storage/releases/posters/8452/SGNbbiOrKQebDOkuhTVZIXr8f9AnDPMK.webp"
+    }
+   },
+   "fresh_at": "2026-10-25T04:40:49+00:00",
+   "created_at": "2021-12-26T21:50:13+00:00",
+   "updated_at": "2026-10-24T14:08:54+00:00",
+   "is_ongoing": false,
+   "age_rating": {
+    "value": "R16_PLUS",
+    "label": "16+",
+    "is_adult": false,
+    "description": "Для людей, достигших возраста шестнадцати лет (16+)"
+   },
+   "publish_day": {
+    "value": 7,
+    "description": "Воскресенье"
+   },
+   "description": "Ичиго Куросаки - 15-тилетний подросток. Учится в средней шко…",
+   "notification": "выход серий задержится на неопределённый срок",
+   "episodes_total": 366,
+   "external_player": "//kodik.info/serial/19210/99af716b81b31a65f7e31035f5bba353/720p?translations=false",
+   "is_in_production": true,
+   "is_blocked_by_geo": false,
+   "is_blocked_by_copyrights": false,
+   "is_comments_closed": false,
+   "comments_count": 0,
+   "added_in_users_favorites": 25865,
+   "average_duration_of_episode": 25,
+   "added_in_planned_collection": 927,
+   "added_in_watched_collection": 1725,
+   "added_in_watching_collection": 1920,
+   "added_in_postponed_collection": 234,
+   "added_in_abandoned_collection": 161,
+   "genres": [
+    {
+     "id": 1,
+     "name": "Комедия",
+     "image": {
+      "preview": "/storage/anime/genres/images/1/U1sFaXCMz3PE7nxORf5D8qhN0tX2reqW.jpg",
+      "thumbnail": "/storage/anime/genres/images/1/QBNpOye0tk9DVySvQN1wz9j3iZdZhvZp.jpg",
+      "optimized": {
+       "preview": "/storage/anime/genres/images/1/2jgEuWgDWkIK1ucumMsWv1EzGy5jOT5j.webp",
+       "thumbnail": "/storage/anime/genres/images/1/2HNoBbkhXvWQwzF4WyYZwc6bMdaeRy47.webp"
+      }
+     },
+     "total_releases": 678
+    },
+    {
+     "id": 4,
+     "name": "Сёнен",
+     "image": {
+      "preview": "/storage/anime/genres/images/4/0m2m6ZJvFDf4exm6fTohtHwo8PoEqzIX.jpg",
+      "thumbnail": "/storage/anime/genres/images/4/UD4NKYAngvBtHS2hkcPUNQ9iKBFcotVi.jpg",
+      "optimized": {
+       "preview": "/storage/anime/genres/images/4/f1t40ahbG7mzcmZfhxlVdkC0DtY2vOQ9.webp",
+       "thumbnail": "/storage/anime/genres/images/4/SVJm7UTSTS3flVrQttsOD1d3iUoRp00B.webp"
+      }
+     },
+     "total_releases": 325
+    },
+    {
+     "id": 14,
+     "name": "Экшен",
+     "image": {
+      "preview": "/storage/anime/genres/images/14/HVxcEvm7oA6JQvnMKKgSdYJ90ab8Zoco.jpg",
+      "thumbnail": "/storage/anime/genres/images/14/7JeDltmth6vVUs1bG4OHq6ywRYVjbYoY.jpg",
+      "optimized": {
+       "preview": "/storage/anime/genres/images/14/FNZP4gLtDFe67Ynbthc08wRsTp5q94sx.webp",
+       "thumbnail": "/storage/anime/genres/images/14/gfzjNkJYPgeaIyQxXveaP5UblbQWadEF.webp"
+      }
+     },
+     "total_releases": 694
+    },
+    {
+     "id": 21,
+     "name": "Супер сила",
+     "image": {
+      "preview": "/storage/anime/genres/images/21/aIpYpD4j4hHnK8TnS2kCcWK5e3X5VKOL.jpg",
+      "thumbnail": "/storage/anime/genres/images/21/v5iMQzYd28I5BCYhWSOmGQ69K24Za16K.jpg",
+      "optimized": {
+       "preview": "/storage/anime/genres/images/21/6c0MVrfBPvuM85Z93Bgrs0YovX5xX4D4.webp",
+       "thumbnail": "/storage/anime/genres/images/21/pRhiYk1irEaz8lATqOEx8aZh8Qshc2qV.webp"
+      }
+     },
+     "total_releases": 51
+    },
+    {
+     "id": 27,
+     "name": "Приключения",
+     "image": {
+      "preview": "/storage/anime/genres/images/27/bcU7byqneZPf1E3qj3g94enAUtoRUr9A.jpg",
+      "thumbnail": "/storage/anime/genres/images/27/dkzAZJGJI45REJTjVMNAJXNi4wHo0AOS.jpg",
+      "optimized": {
+       "preview": "/storage/anime/genres/images/27/z4kgvrZz4JSSy0G1EtWBDSH1SA76Aex1.webp",
+       "thumbnail": "/storage/anime/genres/images/27/lEZNqdhonXq9BAejItNKgPTv1XLFbwdD.webp"
+      }
+     },
+     "total_releases": 455
+    },
+    {
+     "id": 28,
+     "name": "Сверхъестественное",
+     "image": {
+      "preview": "/storage/anime/genres/images/28/pUwDuFHdJkJpibQwKoROuz99Ayg0MV2t.jpg",
+      "thumbnail": "/storage/anime/genres/images/28/OOnUfzM433g7kC6Guz4uohiBCPeENqQx.jpg",
+      "optimized": {
+       "preview": "/storage/anime/genres/images/28/m0P5nQwrDSKuvXrLnutlKqhweVc1MLXN.webp",
+       "thumbnail": "/storage/anime/genres/images/28/7zjjRP4Cu91AdJDp9cdUEA7Au3fVrAfv.webp"
+      }
+     },
+     "total_releases": 304
+    },
+    {
+     "id": 29,
+     "name": "Фэнтези",
+     "image": {
+      "preview": "/storage/anime/genres/images/29/BqPfwYPC7STQ0lsv6LsdyDm594Tnz2N5.jpg",
+      "thumbnail": "/storage/anime/genres/images/29/bkKObn59vWFAd8wcAPINJnI8EZLZB8gH.jpg",
+      "optimized": {
+       "preview": "/storage/anime/genres/images/29/BayKuKbzHQkKMlfFyUTZAoExCjqkHDfh.webp",
+       "thumbnail": "/storage/anime/genres/images/29/yVUCPUfGguBeZ280YyS5UhawlR3F1fS0.webp"
+      }
+     },
+     "total_releases": 619
+    }
+   ]
+  },
+  "full_season_is_released": false,
+  "published_release_episode": null,
+  "next_release_episode_number": 358
+ },
+ {
+  "release": {
+   "id": 8986,
+   "type": {
+    "value": "ONA",
+    "description": "ОNA"
+   },
+   "year": 2009,
+   "name": {
+    "main": "Хеталия и страны Оси",
+    "english": "Hetalia Axis Powers",
+    "alternative": null
+   },
+   "alias": "hetalia-axis-powers",
+   "season": {
+    "value": "winter",
+    "description": "Зима"
+   },
+   "shikimori": {
+    "id": 5060,
+    "url": "https://shikimori.io/animes/5060",
+    "votes": 6323,
+    "rating": 7.54
+   },
+   "mal": {
+    "id": 5060,
+    "url": "https://myanimelist.net/anime/5060",
+    "votes": 132281,
+    "rating": 7.25
+   },
+   "rating": {
+    "average": null,
+    "votes": 0,
+    "distribution": {
+     "1": 0,
+     "2": 0,
+     "3": 0,
+     "4": 0,
+     "5": 0,
+     "6": 0,
+     "7": 0,
+     "8": 0,
+     "9": 0,
+     "10": 0
+    }
+   },
+   "poster": {
+    "src": "/storage/releases/posters/8986/kGkczxTwJDjAuuK5Ss2nHk1YiaHqiTit.jpg",
+    "preview": "/storage/releases/posters/8986/kGkczxTwJDjAuuK5Ss2nHk1YiaHqiTit.jpg",
+    "thumbnail": "/storage/releases/posters/8986/gvKecPiDoz2LDk6txdhlPZNTKe7hJFoS.jpg",
+    "optimized": {
+     "src": "/storage/releases/posters/8986/Ey3SLZSnwhRuIINXV2UqAYd9J8COhgAy.webp",
+     "preview": "/storage/releases/posters/8986/Ey3SLZSnwhRuIINXV2UqAYd9J8COhgAy.webp",
+     "thumbnail": "/storage/releases/posters/8986/OmLLsUVMietF0NjWLlbtuU3wx8acE9Ao.webp"
+    }
+   },
+   "fresh_at": "2026-10-24T15:51:55+00:00",
+   "created_at": null,
+   "updated_at": "2026-10-24T15:11:02+00:00",
+   "is_ongoing": false,
+   "age_rating": {
+    "value": "R16_PLUS",
+    "label": "16+",
+    "is_adult": false,
+    "description": "Для людей, достигших возраста шестнадцати лет (16+)"
+   },
+   "publish_day": {
+    "value": 1,
+    "description": "Понедельник"
+   },
+   "description": "Сериал основан на популярной веб-манге Хидэкадзу Химаруи, гд…",
+   "notification": "новые серии по мере готовности",
+   "episodes_total": 52,
+   "external_player": null,
+   "is_in_production": true,
+   "is_blocked_by_geo": false,
+   "is_blocked_by_copyrights": false,
+   "is_comments_closed": false,
+   "comments_count": 0,
+   "added_in_users_favorites": 622,
+   "average_duration_of_episode": 5,
+   "added_in_planned_collection": 41,
+   "added_in_watched_collection": 4,
+   "added_in_watching_collection": 30,
+   "added_in_postponed_collection": 6,
+   "added_in_abandoned_collection": 7,
+   "genres": [
+    {
+     "id": 1,
+     "name": "Комедия",
+     "image": {
+      "preview": "/storage/anime/genres/images/1/U1sFaXCMz3PE7nxORf5D8qhN0tX2reqW.jpg",
+      "thumbnail": "/storage/anime/genres/images/1/QBNpOye0tk9DVySvQN1wz9j3iZdZhvZp.jpg",
+      "optimized": {
+       "preview": "/storage/anime/genres/images/1/2jgEuWgDWkIK1ucumMsWv1EzGy5jOT5j.webp",
+       "thumbnail": "/storage/anime/genres/images/1/2HNoBbkhXvWQwzF4WyYZwc6bMdaeRy47.webp"
+      }
+     },
+     "total_releases": 678
+    },
+    {
+     "id": 4,
+     "name": "Сёнен",
+     "image": {
+      "preview": "/storage/anime/genres/images/4/0m2m6ZJvFDf4exm6fTohtHwo8PoEqzIX.jpg",
+      "thumbnail": "/storage/anime/genres/images/4/UD4NKYAngvBtHS2hkcPUNQ9iKBFcotVi.jpg",
+      "optimized": {
+       "preview": "/storage/anime/genres/images/4/f1t40ahbG7mzcmZfhxlVdkC0DtY2vOQ9.webp",
+       "thumbnail": "/storage/anime/genres/images/4/SVJm7UTSTS3flVrQttsOD1d3iUoRp00B.webp"
+      }
+     },
+     "total_releases": 325
+    },
+    {
+     "id": 26,
+     "name": "Исторический",
+     "image": {
+      "preview": "/storage/anime/genres/images/26/lkX06fFnPHXl7H3GCuYwqtLCPDWvoEcu.jpg",
+      "thumbnail": "/storage/anime/genres/images/26/WFR11q1ZIYPRRZ0yx61pZgWgnqvqkPyV.jpg",
+      "optimized": {
+       "preview": "/storage/anime/genres/images/26/rU3zWwD9jZyQHqXhE0qOEyd9mDnT5K9x.webp",
+       "thumbnail": "/storage/anime/genres/images/26/FVN9zAt3JC74IXtGVWobFDmZhwpYdc6l.webp"
+      }
+     },
+     "total_releases": 92
+    }
+   ]
+  },
+  "full_season_is_released": false,
+  "published_release_episode": null,
+  "next_release_episode_number": 26
+ },
+ {
+  "release": {
+   "id": 10151,
+   "type": {
+    "value": "TV",
+    "description": "ТВ"
+   },
+   "year": 2008,
+   "name": {
+    "main": "Код Гиасс: Восстание Лелуша R2 — новый дубляж",
+    "english": "Code Geass: Hangyaku no Lelouch R2",
+    "alternative": null
+   },
+   "alias": "code-geass-hangyaku-no-lelouch-r2",
+   "season": {
+    "value": null,
+    "description": null
+   },
+   "shikimori": {
+    "id": 2904,
+    "url": "https://shikimori.io/animes/2904",
+    "votes": 81841,
+    "rating": 9.01
+   },
+   "mal": {
+    "id": 2904,
+    "url": "https://myanimelist.net/anime/2904",
+    "votes": 1321126,
+    "rating": 8.92
+   },
+   "rating": {
+    "average": null,
+    "votes": 0,
+    "distribution": {
+     "1": 0,
+     "2": 0,
+     "3": 0,
+     "4": 0,
+     "5": 0,
+     "6": 0,
+     "7": 0,
+     "8": 0,
+     "9": 0,
+     "10": 0
+    }
+   },
+   "poster": {
+    "src": "/storage/releases/posters/10151/1FBJWMduXUnWYtkiasNYq6tl3M7Ba1X6.jpg",
+    "preview": "/storage/releases/posters/10151/1FBJWMduXUnWYtkiasNYq6tl3M7Ba1X6.jpg",
+    "thumbnail": "/storage/releases/posters/10151/fFHofUtiFzJuYbUioIiBQabywPf4Eoi7.jpg",
+    "optimized": {
+     "src": "/storage/releases/posters/10151/1oemr9irl2ZOAhpt75ddmaJ990rjtnHx.webp",
+     "preview": "/storage/releases/posters/10151/1oemr9irl2ZOAhpt75ddmaJ990rjtnHx.webp",
+     "thumbnail": "/storage/releases/posters/10151/hpX6Fe8zvbz5TytO3Ly1MScWsMdr9u2F.webp"
+    }
+   },
+   "fresh_at": "2026-08-30T20:07:41+00:00",
+   "created_at": "2026-02-14T15:16:21+00:00",
+   "updated_at": "2026-08-30T20:06:54+00:00",
+   "is_ongoing": false,
+   "age_rating": {
+    "value": "R16_PLUS",
+    "label": "16+",
+    "is_adult": false,
+    "description": "Для людей, достигших возраста шестнадцати лет (16+)"
+   },
+   "publish_day": {
+    "value": 1,
+    "description": "Понедельник"
+   },
+   "description": "Молодой британец Лелуш и сам не знал, в какую историю окажет…",
+   "notification": null,
+   "episodes_total": 25,
+   "external_player": null,
+   "is_in_production": true,
+   "is_blocked_by_geo": false,
+   "is_blocked_by_copyrights": false,
+   "is_comments_closed": false,
+   "comments_count": 0,
+   "added_in_users_favorites": 1977,
+   "average_duration_of_episode": 24,
+   "added_in_planned_collection": 181,
+   "added_in_watched_collection": 249,
+   "added_in_watching_collection": 156,
+   "added_in_postponed_collection": 13,
+   "added_in_abandoned_collection": 8,
+   "genres": [
+    {
+     "id": 2,
+     "name": "Меха",
+     "image": {
+      "preview": "/storage/anime/genres/images/2/PUcAOBj2r1r1jV9mRlcLqDcMOfCPLkDu.jpg",
+      "thumbnail": "/storage/anime/genres/images/2/kdcapbNHGgxMupTdge7ikndqKj9oRPms.jpg",
+      "optimized": {
+       "preview": "/storage/anime/genres/images/2/CNGi6sPLAjypJhWLChUGej5HAWaJ95AO.webp",
+       "thumbnail": "/storage/anime/genres/images/2/oGxtjOwgz3wDgJwOno4OIqsYsuePmlHg.webp"
+      }
+     },
+     "total_releases": 58
+    },
+    {
+     "id": 8,
+     "name": "Драма",
+     "image": {
+      "preview": "/storage/anime/genres/images/8/zsAUP1RD6fLnJXMwTnH3awJNY0F3qlc3.jpg",
+      "thumbnail": "/storage/anime/genres/images/8/rQWlDbZpCDJroKwGrKMmCTAxjJ4gAsdQ.jpg",
+      "optimized": {
+       "preview": "/storage/anime/genres/images/8/xAYRsKLcdinBkDAPNaTPTw67CDx6C6y4.webp",
+       "thumbnail": "/storage/anime/genres/images/8/xL6iOX6aTj5swKxJdCPeucQnUc8Ka4ho.webp"
+      }
+     },
+     "total_releases": 365
+    },
+    {
+     "id": 22,
+     "name": "Фантастика",
+     "image": {
+      "preview": "/storage/anime/genres/images/22/SkMfGTRw25vgROZYw2ckIFThCj6vieKr.jpg",
+      "thumbnail": "/storage/anime/genres/images/22/ITIPuxUQTOmgnVdrWsKsvpHILkKC8XKf.jpg",
+      "optimized": {
+       "preview": "/storage/anime/genres/images/22/eWMwlRJdiIp9AVbEBvc3uNoJtPoNZZtb.webp",
+       "thumbnail": "/storage/anime/genres/images/22/BsPOUSqL5Fmd8opLAAnnv8g9B86U3iyb.webp"
+      }
+     },
+     "total_releases": 272
+    },
+    {
+     "id": 27,
+     "name": "Приключения",
+     "image": {
+      "preview": "/storage/anime/genres/images/27/bcU7byqneZPf1E3qj3g94enAUtoRUr9A.jpg",
+      "thumbnail": "/storage/anime/genres/images/27/dkzAZJGJI45REJTjVMNAJXNi4wHo0AOS.jpg",
+      "optimized": {
+       "preview": "/storage/anime/genres/images/27/z4kgvrZz4JSSy0G1EtWBDSH1SA76Aex1.webp",
+       "thumbnail": "/storage/anime/genres/images/27/lEZNqdhonXq9BAejItNKgPTv1XLFbwdD.webp"
+      }
+     },
+     "total_releases": 455
+    }
+   ]
+  },
+  "full_season_is_released": false,
+  "published_release_episode": null,
+  "next_release_episode_number": 15
+ }
+]
