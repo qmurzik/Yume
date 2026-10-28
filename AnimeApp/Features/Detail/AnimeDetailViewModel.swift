@@ -11,7 +11,13 @@ final class AnimeDetailViewModel: ObservableObject {
     @Published var voice: String?
 
     let availableSources: [SourceID]
+    /// Sources switched off in this build, e.g. YummyAnime without an application key.
+    let disabledSources: [SourceID]
+    /// Sources already checked that don't have this title.
+    @Published private(set) var missingIn: [SourceID] = []
     private let services: AppServices
+    /// While false, a source without the title is skipped automatically.
+    private var userPickedSource: Bool
     private var cache: [SourceID: [SourceEpisode]] = [:]
     private var preferredVoice: String?
     private var sourceTask: Task<Void, Never>?
@@ -22,7 +28,10 @@ final class AnimeDetailViewModel: ObservableObject {
         self.services = services
         self.preferredVoice = preferredVoice
         availableSources = services.sources.available.map(\.id)
-        sourceID = preferredSource.flatMap { availableSources.contains($0) ? $0 : nil } ?? availableSources.first
+        disabledSources = services.sources.sources.filter { !$0.isAvailable }.map(\.id)
+        let preferred = preferredSource.flatMap { services.sources.available.map(\.id).contains($0) ? $0 : nil }
+        userPickedSource = preferred != nil
+        sourceID = preferred ?? availableSources.first
     }
 
     var hasDetails: Bool { anime.value?.studios.isEmpty == false || anime.value?.description != nil }
@@ -83,6 +92,7 @@ final class AnimeDetailViewModel: ObservableObject {
 
     func selectSource(_ id: SourceID) {
         guard id != sourceID else { return }
+        userPickedSource = true
         sourceID = id
         voice = nil
         sourceTask?.cancel()
@@ -90,7 +100,7 @@ final class AnimeDetailViewModel: ObservableObject {
     }
 
     func loadEpisodes(force: Bool = false) async {
-        guard let sourceID, let source = services.sources.source(sourceID), let anime = anime.value else {
+        guard let sourceID, services.sources.source(sourceID) != nil, anime.value != nil else {
             episodesState = .failed(APIError.sourceUnavailable(self.sourceID?.title ?? "—"))
             return
         }
@@ -98,18 +108,47 @@ final class AnimeDetailViewModel: ObservableObject {
             setEpisodes(cached)
             return
         }
+        if force { missingIn = [] }
         episodesState = .loading
-        do {
-            guard let title = try await source.findTitle(for: anime) else { throw APIError.notFound }
-            let list = try await source.episodes(for: title)
-            guard self.sourceID == sourceID else { return }
-            cache[sourceID] = list
-            setEpisodes(list)
-        } catch is CancellationError {
-        } catch {
-            guard self.sourceID == sourceID else { return }
-            episodesState = .failed(error)
+        var candidate: SourceID? = sourceID
+        while let current = candidate {
+            if let cached = cache[current] {
+                setEpisodes(cached)
+                return
+            }
+            do {
+                let list = try await fetchEpisodes(from: current)
+                guard self.sourceID == current else { return }
+                cache[current] = list
+                setEpisodes(list)
+                return
+            } catch is CancellationError {
+                return
+            } catch where error.isNotFound && !userPickedSource {
+                // Not in this source: move on to the next one the user hasn't ruled out.
+                if !missingIn.contains(current) { missingIn.append(current) }
+                candidate = availableSources.first { !missingIn.contains($0) }
+                if let next = candidate { self.sourceID = next }
+            } catch {
+                guard self.sourceID == current else { return }
+                if error.isNotFound, !missingIn.contains(current) { missingIn.append(current) }
+                episodesState = .failed(error)
+                return
+            }
         }
+        // No source has the title; show the first one's "not found" state.
+        self.sourceID = availableSources.first
+        episodesState = .failed(APIError.notFound)
+    }
+
+    private func fetchEpisodes(from id: SourceID) async throws -> [SourceEpisode] {
+        guard let source = services.sources.source(id), let anime = anime.value else {
+            throw APIError.sourceUnavailable(id.title)
+        }
+        guard let title = try await source.findTitle(for: anime) else { throw APIError.notFound }
+        let list = try await source.episodes(for: title)
+        if list.isEmpty { throw APIError.notFound }
+        return list
     }
 
     private func setEpisodes(_ list: [SourceEpisode]) {

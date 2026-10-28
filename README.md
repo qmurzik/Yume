@@ -1,7 +1,7 @@
 # AnimeApp — аниме с русской озвучкой для iOS
 
 Нативное iOS-приложение (SwiftUI, iOS 16+) для просмотра аниме с русской озвучкой и субтитрами.
-Метаданные берутся из Shikimori, видео — из AniLibria и (по желанию) YummyAnime.
+Метаданные берутся из Shikimori, видео — из AniLibria, AnimeVost и (по желанию) YummyAnime.
 Проект собирается только в GitHub Actions: Mac не нужен.
 
 > Эта ветка (`ios-anime`) — отдельное ответвление репозитория без истории Android-модуля Yume.
@@ -26,14 +26,30 @@
 |---|---|---|
 | [Shikimori](https://shikimori.io/api/doc) | каталог, поиск, жанры, рейтинги, постеры, описания, похожие | GraphQL `POST /api/graphql`, REST `GET /api/animes/:id/similar` |
 | [AniLibria](https://aniliberty.top/api/docs/v1) | релизы, серии, HLS 480/720/1080, тайминги опенинга, расписание | `GET /api/v1/app/search/releases`, `/anime/releases/{id}`, `/anime/releases/episodes/{id}`, `/anime/releases/latest`, `/anime/schedule/week` |
+| [AnimeVost](https://api.animevost.org/v1) | своя озвучка, прямые MP4 480p/720p | `POST /v1/search`, `POST /v1/playlist` |
 | [YummyAnime](https://api.yani.tv/swagger) | дополнительные озвучки и плееры | `GET /anime?shikimori_ids=`, `/search`, `/anime/{id}/videos` |
 
 - Shikimori требует название приложения в `User-Agent` и ограничивает API до 5 запросов в секунду
   и 90 в минуту. Все запросы к нему идут через общий `RateLimiter`, который соблюдает оба окна.
 - Тайтлы между источниками сопоставляются по ID Shikimori/MyAnimeList (AniLibria и YummyAnime их отдают),
   а если ID нет — по нормализованному названию и году выхода (`TitleMatcher`).
+- Если тайтла нет в первом источнике, карточка сама пробует следующий (AniLibria → AnimeVost → YummyAnime).
+  Если вы выбрали источник вручную, приложение запоминает выбор для этого тайтла.
+- AnimeVost отдаёт готовые MP4, они играют в AVPlayer со всеми функциями плеера. ID Shikimori у него нет,
+  поэтому тайтлы сопоставляются по оригинальному названию и году.
 - YummyAnime отдаёт не прямые потоки, а официальные встраиваемые плееры (Kodik, Aksor, Alloha…),
   поэтому такие серии открываются во встроенном веб-плеере. Защиту и DRM приложение не обходит.
+
+### Покрытие и почему не другие источники
+
+Проверка на 50 популярных тайтлах и онгоингах Shikimori: AniLibria нашла 27, вместе с AnimeVost — 39.
+Оставшиеся («Атака титанов» 2–3, Re:Zero, «Охотник х Охотник» 2011 и т. п.) удалены из этих каталогов
+или не озвучивались ими, зато есть в YummyAnime, поэтому стоит добавить его ключ (см. ниже).
+
+- **Shikimori** сам видео не хранит: в API есть только трейлеры, опенинги и эндинги с YouTube.
+- **AniLib** не имеет публичной документации API, а сервер закрывает доступ защитой от ботов (HTTP 403). Обходить её приложение не будет.
+- **Anime365** без аккаунта с подпиской отдаёт пустой плеер (`require-activation`), поэтому смотреть через него анонимно нельзя.
+- **Kodik** требует партнёрский токен, который выдаётся по заявке.
 
 ## Хранение данных: почему JSON-файл
 
@@ -84,7 +100,9 @@ IPA не подписан — его подпишет AltStore или Sideloadly
 ## Ключ YummyAnime
 
 Документация YummyAnime требует публичный токен приложения в заголовке `X-Application`.
-Без него приложение работает, просто источник YummyAnime скрыт.
+Без него приложение работает, просто источник YummyAnime выключен (в карточке тайтла об этом есть подсказка).
+Ключ бесплатный и сильно расширяет выбор: у YummyAnime много озвучек и субтитров, включая тайтлы,
+которых нет в AniLibria и AnimeVost.
 
 1. Создайте приложение на <https://yummyani.me/dev/applications> и скопируйте публичный токен.
 2. **Для сборки в CI:** репозиторий → **Settings → Secrets and variables → Actions → New repository secret**,
@@ -105,7 +123,7 @@ AnimeApp/
     Networking/             HTTPClient, RateLimiter, ошибки
     Shikimori/              GraphQL-клиент и разбор ответов
     Sources/                протокол AnimeSource, TitleMatcher
-      AniLibria/  Yummy/    реализации источников
+      AniLibria/  AnimeVost/  Yummy/   реализации источников
     Storage/                LibraryStore (JSON)
     Models/  Util/
   Features/                 Home, Catalog, Search, Detail, Player, Schedule, Library (MVVM)

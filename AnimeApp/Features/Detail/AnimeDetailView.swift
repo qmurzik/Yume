@@ -199,6 +199,7 @@ private struct AnimeDetailContent: View {
             } else if let source = model.sourceID {
                 Text("Источник: \(source.title)").font(.footnote).foregroundStyle(.secondary)
             }
+            sourceNotes
 
             switch model.episodesState {
             case .idle, .loading:
@@ -206,7 +207,7 @@ private struct AnimeDetailContent: View {
             case .failed(let error) where error.isNotFound:
                 EmptyStateView(
                     title: "Нет в источнике «\(model.sourceID?.title ?? "")»",
-                    message: model.availableSources.count > 1 ? "Попробуйте другой источник." : "Этот тайтл пока не озвучен.",
+                    message: notFoundMessage,
                     systemImage: "film.stack"
                 )
             case .failed(let error):
@@ -234,6 +235,30 @@ private struct AnimeDetailContent: View {
                     }
                 }
             }
+        }
+    }
+
+    private var notFoundMessage: String {
+        let all = model.availableSources
+        guard all.count > 1 else { return "Этот тайтл пока не озвучен." }
+        guard Set(model.missingIn) == Set(all) else { return "Попробуйте другой источник." }
+        let names = all.map(\.title).joined(separator: ", ")
+        return "Мы проверили все источники: \(names). Возможно, тайтл удалён по требованию правообладателя или ещё не озвучен."
+    }
+
+    @ViewBuilder
+    private var sourceNotes: some View {
+        let missing = model.missingIn.filter { $0 != model.sourceID }
+        if !missing.isEmpty, model.episodesState.value != nil {
+            Label("Нет в: \(missing.map(\.title).joined(separator: ", "))", systemImage: "info.circle")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+        if !model.disabledSources.isEmpty {
+            Label("\(model.disabledSources.map(\.title).joined(separator: ", ")) выключен: в сборке нет ключа приложения (см. README).",
+                  systemImage: "key")
+                .font(.caption)
+                .foregroundStyle(.secondary)
         }
     }
 
