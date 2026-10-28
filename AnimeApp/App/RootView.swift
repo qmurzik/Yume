@@ -11,6 +11,8 @@ struct RootView: View {
                 .tabItem { Label("Поиск", systemImage: "magnifyingglass") }
             ScheduleView()
                 .tabItem { Label("Расписание", systemImage: "calendar") }
+            LibraryView()
+                .tabItem { Label("Моё", systemImage: "person.crop.circle") }
         }
     }
 }
