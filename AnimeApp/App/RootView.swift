@@ -7,6 +7,8 @@ struct RootView: View {
                 .tabItem { Label("Главная", systemImage: "house") }
             CatalogView()
                 .tabItem { Label("Каталог", systemImage: "square.grid.2x2") }
+            SearchView()
+                .tabItem { Label("Поиск", systemImage: "magnifyingglass") }
         }
     }
 }
