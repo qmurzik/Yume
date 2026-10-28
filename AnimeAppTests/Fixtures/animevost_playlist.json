@@ -1,0 +1,20 @@
+[
+ {
+  "name": "1 серия",
+  "hd": "http://video.animetop.info/720/1055923300.mp4",
+  "std": "http://video.animetop.info/1055923300.mp4",
+  "preview": "http://media.animetop.info/img/1055923300.jpg"
+ },
+ {
+  "name": "2 серия",
+  "hd": "http://video.animetop.info/720/825123123.mp4",
+  "std": "http://video.animetop.info/825123123.mp4",
+  "preview": "http://media.animetop.info/img/825123123.jpg"
+ },
+ {
+  "name": "3 серия",
+  "hd": "http://video.animetop.info/720/1129679610.mp4",
+  "std": "http://video.animetop.info/1129679610.mp4",
+  "preview": "http://media.animetop.info/img/1129679610.jpg"
+ }
+]

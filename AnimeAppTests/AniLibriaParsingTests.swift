@@ -30,7 +30,7 @@ final class AniLibriaParsingTests: XCTestCase {
         let stream = try AniLibriaParser.stream(from: Fixture.data("anilibria_episode"))
         XCTAssertEqual(stream.qualities.map(\.height), [1080, 720, 480])
         XCTAssertTrue(stream.qualities.allSatisfy { $0.url.pathExtension == "m3u8" })
-        guard case .hls = stream.kind else { return XCTFail("AniLibria must give HLS") }
+        guard case .native = stream.kind else { return XCTFail("AniLibria must give HLS for AVPlayer") }
     }
 
     func testOpeningTimecodes() throws {

@@ -26,6 +26,8 @@ final class PlayerViewModel: ObservableObject {
     private let source: (any AnimeSource)?
     private var stream: StreamInfo?
     private var pendingSeek: Double?
+    /// Qualities that failed to open for the current episode (e.g. a missing 720p file).
+    private var failedQualities: Set<Int> = []
     private var lastSavedPosition: Double = 0
     private var loadTask: Task<Void, Never>?
     private var timeObserver: Any?
@@ -80,6 +82,7 @@ final class PlayerViewModel: ObservableObject {
         isInEnding = false
         stream = nil
         qualities = []
+        failedQualities = []
         player.pause()
         player.replaceCurrentItem(with: nil)
 
@@ -106,9 +109,9 @@ final class PlayerViewModel: ObservableObject {
         stream = info
 
         switch info.kind {
-        case .hls(let list) where list.isEmpty:
+        case .native(let list) where list.isEmpty:
             phase = .failed(APIError.server("Для этой серии нет видеопотока."))
-        case .hls:
+        case .native:
             qualities = info.qualities
             let preferred = UserDefaults.standard.integer(forKey: Self.qualityKey)
             let chosen = qualities.first { $0.height == preferred }
@@ -154,7 +157,13 @@ final class PlayerViewModel: ObservableObject {
             }
             player.play()
         case .failed:
-            phase = .failed(APIError.transport(item.error?.localizedDescription ?? "не удалось воспроизвести поток"))
+            if let current = quality { failedQualities.insert(current.height) }
+            if let fallback = qualities.first(where: { !failedQualities.contains($0.height) }) {
+                let position = pendingSeek ?? player.currentTime().seconds
+                play(fallback, at: position.isFinite ? position : 0)
+            } else {
+                phase = .failed(APIError.transport(item.error?.localizedDescription ?? "не удалось воспроизвести поток"))
+            }
         default:
             break
         }

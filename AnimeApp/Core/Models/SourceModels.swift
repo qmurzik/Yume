@@ -2,6 +2,7 @@ import Foundation
 
 enum SourceID: String, Codable, Sendable, CaseIterable, Identifiable {
     case aniLibria = "anilibria"
+    case animeVost = "animevost"
     case yummy = "yummyanime"
 
     var id: String { rawValue }
@@ -9,6 +10,7 @@ enum SourceID: String, Codable, Sendable, CaseIterable, Identifiable {
     var title: String {
         switch self {
         case .aniLibria: return "AniLibria"
+        case .animeVost: return "AnimeVost"
         case .yummy: return "YummyAnime"
         }
     }
@@ -68,8 +70,8 @@ struct StreamQuality: Hashable, Codable, Sendable, Identifiable {
 
 struct StreamInfo: Hashable, Sendable {
     enum Kind: Hashable, Sendable {
-        /// Direct HLS playlists, played with AVPlayer.
-        case hls([StreamQuality])
+        /// Direct HLS playlists or MP4 files, played with AVPlayer.
+        case native([StreamQuality])
         /// The source's official embeddable web player.
         case embed(URL)
     }
@@ -80,7 +82,7 @@ struct StreamInfo: Hashable, Sendable {
 
     /// Best quality first.
     var qualities: [StreamQuality] {
-        if case .hls(let list) = kind { return list.sorted { $0.height > $1.height } }
+        if case .native(let list) = kind { return list.sorted { $0.height > $1.height } }
         return []
     }
 }

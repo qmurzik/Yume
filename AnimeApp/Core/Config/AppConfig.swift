@@ -5,6 +5,7 @@ import Foundation
 enum AppConfig {
     static let shikimoriBaseURL = URL(string: "https://shikimori.io")!
     static let aniLibriaBaseURL = URL(string: "https://aniliberty.top")!
+    static let animeVostBaseURL = URL(string: "https://api.animevost.org")!
     static let yummyBaseURL = URL(string: "https://api.yani.tv")!
 
     /// Shikimori requires the application name in User-Agent and forbids mimicking a browser.

@@ -137,7 +137,7 @@ enum AniLibriaDTO {
             let qualities = [(1080, hls1080), (720, hls720), (480, hls480)].compactMap { height, link in
                 link.flatMap(URL.init(string:)).map { StreamQuality(height: height, url: $0) }
             }
-            return StreamInfo(kind: .hls(qualities), opening: opening?.range, ending: ending?.range)
+            return StreamInfo(kind: .native(qualities), opening: opening?.range, ending: ending?.range)
         }
     }
 
