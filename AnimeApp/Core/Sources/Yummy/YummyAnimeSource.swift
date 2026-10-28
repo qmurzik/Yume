@@ -1,11 +1,23 @@
 import Foundation
 
 /// YummyAnime API (https://api.yani.tv/swagger): many voice-overs, played through the
-/// providers' official embeddable players. Needs a public application token (X-Application);
-/// without it the source stays hidden.
+/// providers' official embeddable players. Needs a public application token (X-Application) from
+/// the build config or from signing in on the Settings screen; without it the source stays off.
 struct YummyAnimeSource: AnimeSource {
-    var token: String? = AppConfig.yummyAppToken
+    /// Read on every request, so signing in or out in Settings applies immediately.
+    private let tokenProvider: @Sendable () -> String?
     var baseURL = AppConfig.yummyBaseURL
+
+    init() {
+        tokenProvider = { YummyCredentials.shared.appToken }
+    }
+
+    /// Fixed key, for tests.
+    init(token: String?) {
+        tokenProvider = { token }
+    }
+
+    var token: String? { tokenProvider() }
 
     let id = SourceID.yummy
     var isAvailable: Bool { token != nil }
