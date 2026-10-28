@@ -89,7 +89,15 @@ jobs:
           echo "Using simulator $UDID"
           echo "udid=$UDID" >> "$GITHUB_OUTPUT"
 
+      # Booting separately makes a slow or stuck simulator visible and bounded in time.
+      - name: Boot simulator
+        timeout-minutes: 10
+        run: |
+          xcrun simctl boot "${{ steps.sim.outputs.udid }}" || true
+          xcrun simctl bootstatus "${{ steps.sim.outputs.udid }}" -b
+
       - name: Build for testing
+        timeout-minutes: 20
         run: |
           set -o pipefail
           xcodebuild build-for-testing \
@@ -100,6 +108,7 @@ jobs:
             CODE_SIGNING_ALLOWED=NO -quiet 2>&1 | tee build-test.log
 
       - name: Run unit tests
+        timeout-minutes: 15
         run: |
           set -o pipefail
           xcodebuild test-without-building \
@@ -107,9 +116,14 @@ jobs:
             -destination "id=${{ steps.sim.outputs.udid }}" \
             -clonedSourcePackagesDirPath SourcePackages \
             -derivedDataPath DerivedData \
-            CODE_SIGNING_ALLOWED=NO -quiet 2>&1 | tee test.log
+            -parallel-testing-enabled NO \
+            -test-timeouts-enabled YES \
+            -default-test-execution-time-allowance 60 \
+            -maximum-test-execution-time-allowance 120 \
+            CODE_SIGNING_ALLOWED=NO 2>&1 | tee test.log | grep -E --line-buffered "Test Case|Test Suite|error:|Executed|TEST (SUCCEEDED|FAILED)|Testing (started|failed)"
 
       - name: Archive (unsigned)
+        timeout-minutes: 20
         run: |
           set -o pipefail
           xcodebuild archive \
