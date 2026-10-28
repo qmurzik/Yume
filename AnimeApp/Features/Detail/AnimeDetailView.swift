@@ -358,6 +358,7 @@ private struct AnimeDetailContent: View {
         .animation(Motion.spring, value: model.voice)
         .animation(Motion.spring, value: rangeIndex)
         .animation(Motion.snappy, value: model.sourceID)
+    }
 
     private var sourceChips: some View {
         ScrollView(.horizontal, showsIndicators: false) {
