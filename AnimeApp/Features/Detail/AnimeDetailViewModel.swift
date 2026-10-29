@@ -27,6 +27,9 @@ final class AnimeDetailViewModel: ObservableObject {
     private var sourceTask: Task<Void, Never>?
 
     private var preferredPlayer: String?
+    /// Matched entry per source, e.g. for its website link.
+    private(set) var titles: [SourceID: SourceTitle] = [:]
+    var currentWebURL: URL? { sourceID.flatMap { titles[$0]?.webURL } }
 
     init(route: AnimeRoute, preferredSource: SourceID?, preferredVoice: String?, preferredPlayer: String? = nil,
          services: AppServices = .live) {
@@ -180,6 +183,7 @@ final class AnimeDetailViewModel: ObservableObject {
             throw APIError.sourceUnavailable(id.title)
         }
         guard let title = try await source.findTitle(for: anime) else { throw APIError.notFound }
+        titles[id] = title
         let list = try await source.episodes(for: title)
         if list.isEmpty { throw APIError.notFound }
         return list

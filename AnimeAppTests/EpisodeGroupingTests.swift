@@ -31,6 +31,18 @@ final class EpisodeGroupingTests: XCTestCase {
         XCTAssertEqual(alternatives["3"]?.map(\.player), ["Aksor"])
     }
 
+    func testRestrictedPlayerGoesLast() {
+        func copy(_ number: Int, _ player: String) -> SourceEpisode {
+            SourceEpisode(source: .yummy, id: "\(player)\(number)", number: Double(number), title: nil, voice: "AniDUB", player: player)
+        }
+        let all = (1...12).map { copy($0, "Kodik") } + (1...10).map { copy($0, "Alloha") }
+        XCTAssertEqual(EpisodeGrouping.players(all, voice: "AniDUB"), ["Alloha", "Kodik"])
+        let list = EpisodeGrouping.episodes(all, voice: "AniDUB", preferredPlayer: nil)
+        XCTAssertEqual(list.count, 12)
+        XCTAssertEqual(list.prefix(10).map(\.player), Array(repeating: "Alloha", count: 10))
+        XCTAssertEqual(list.suffix(2).map(\.player), ["Kodik", "Kodik"], "only Kodik has 11 and 12")
+    }
+
     func testSourcesWithoutPlayers() {
         let all = (1...3).map { SourceEpisode(source: .aniLibria, id: "\($0)", number: Double($0), title: nil, voice: "AniLibria") }
         XCTAssertEqual(EpisodeGrouping.players(all, voice: "AniLibria"), [])

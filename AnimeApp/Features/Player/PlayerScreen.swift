@@ -50,7 +50,9 @@ struct PlayerScreen: View {
                     VStack(spacing: 0) {
                         videoArea
                             .frame(width: proxy.size.width, height: proxy.size.width * 9 / 16)
-                        PortraitPanel(model: model, progress: library.progress(animeID: model.context.anime.id))
+                        PortraitPanel(model: model, progress: library.progress(animeID: model.context.anime.id)) {
+                            dismiss()
+                        }
                     }
                 }
             }
@@ -118,7 +120,8 @@ struct PlayerScreen: View {
                 nativePlayer
             case .embed(let url):
                 EmbedPlayerView(url: url)
-                if isLandscape { closeOverlay }
+                // The web page owns the surface, so our own way out must always be there.
+                closeOverlay
             }
         }
         .clipped()
@@ -601,12 +604,19 @@ struct PlayerScreen: View {
 private struct PortraitPanel: View {
     @ObservedObject var model: PlayerViewModel
     let progress: [String: EpisodeProgress]
+    let onClose: () -> Void
+
+    private var isEmbed: Bool {
+        if case .embed = model.phase { return true }
+        return false
+    }
 
     var body: some View {
         ScrollViewReader { reader in
             ScrollView {
                 VStack(alignment: .leading, spacing: 18) {
                     header
+                    if isEmbed { embedHelp }
                     if let next = model.nextEpisode, model.autoplayCountdown != nil || model.didFinish {
                         NextEpisodeCard(next: next, countdown: model.autoplayCountdown,
                                         onPlay: { model.playNext() }, onCancel: { model.cancelAutoplay() })
@@ -630,10 +640,24 @@ private struct PortraitPanel: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text(model.context.anime.title)
-                .font(.title3.weight(.heavy))
+            HStack(alignment: .top) {
+                Text(model.context.anime.title)
+                    .font(.title3.weight(.heavy))
+                    .foregroundStyle(.white)
+                    .lineLimit(2)
+                Spacer(minLength: 8)
+                Button {
+                    Haptics.tap()
+                    onClose()
+                } label: {
+                    Image(systemName: "xmark")
+                        .font(.subheadline.weight(.bold))
+                        .frame(width: 34, height: 34)
+                        .background(Theme.surfaceStrong, in: Circle())
+                }
                 .foregroundStyle(.white)
-                .lineLimit(2)
+                .accessibilityLabel("Закрыть плеер")
+            }
             Text(model.episode.displayTitle)
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(Theme.secondaryText)
@@ -646,6 +670,45 @@ private struct PortraitPanel: View {
             }
         }
         .id("header")
+    }
+
+    /// Embedded players are third-party pages; when one shows an error, offer the ways out.
+    private var embedHelp: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Label("Видео показывает плеер \(model.episode.player ?? "YummyAnime")", systemImage: "info.circle.fill")
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(.white)
+            Text(model.alternatives.count > 1
+                 ? "Если видео не открывается («страницы не существует», чёрный экран), выберите другой плеер ниже."
+                 : "Если видео не открывается, выберите другую озвучку или источник в карточке тайтла.")
+                .font(.caption)
+                .foregroundStyle(Theme.secondaryText)
+            HStack(spacing: 10) {
+                if let other = model.alternatives.first(where: { $0.id != model.episode.id }) {
+                    Button {
+                        Haptics.tap()
+                        model.switchPlayer(to: other)
+                    } label: {
+                        Label("Плеер \(other.player ?? "")", systemImage: "arrow.triangle.2.circlepath")
+                            .font(.footnote.weight(.semibold))
+                    }
+                    .buttonStyle(GlassButtonStyle())
+                }
+                if let url = model.context.webURL {
+                    Link(destination: url) {
+                        Label("Открыть на сайте", systemImage: "safari")
+                            .font(.footnote.weight(.semibold))
+                            .padding(.horizontal, 16)
+                            .frame(minHeight: 44)
+                            .background(Theme.surfaceStrong, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                    }
+                    .foregroundStyle(.white)
+                }
+            }
+        }
+        .padding(14)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .card(radius: 16)
     }
 
     private var navigation: some View {

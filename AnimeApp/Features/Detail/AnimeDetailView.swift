@@ -257,7 +257,7 @@ private struct AnimeDetailContent: View {
     private func play(index: Int, anime: Anime) {
         guard let source = model.sourceID, model.episodes.indices.contains(index) else { return }
         player = PlayerContext(anime: SavedAnime(anime: anime), source: source, episodes: model.episodes,
-                               startIndex: index, alternatives: model.alternatives)
+                               startIndex: index, alternatives: model.alternatives, webURL: model.currentWebURL)
     }
 
     // MARK: Info

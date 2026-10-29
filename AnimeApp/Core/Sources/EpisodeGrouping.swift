@@ -17,11 +17,18 @@ enum EpisodeGrouping {
         Dictionary(grouping: all, by: \.voice).mapValues { Set($0.map(\.number)).count }
     }
 
-    /// Players of a voice, most complete first.
+    /// Players whose embeds refuse to load outside their partner sites (Kodik answers
+    /// "страницы не существует"); they are used only when no other player has the episode.
+    static let restrictedPlayers: Set<String> = ["Kodik"]
+
+    /// Players of a voice: working ones first, then most complete.
     static func players(_ all: [SourceEpisode], voice: String) -> [String] {
         let counts = Dictionary(grouping: all.filter { $0.voice == voice }, by: { $0.player ?? "" })
             .mapValues { Set($0.map(\.number)).count }
-        return counts.keys.filter { !$0.isEmpty }.sorted { (counts[$0] ?? 0, $1) > (counts[$1] ?? 0, $0) }
+        func works(_ name: String) -> Int { restrictedPlayers.contains(name) ? 0 : 1 }
+        return counts.keys.filter { !$0.isEmpty }.sorted {
+            (works($0), counts[$0] ?? 0, $1) > (works($1), counts[$1] ?? 0, $0)
+        }
     }
 
     /// One copy per episode number, sorted by number.

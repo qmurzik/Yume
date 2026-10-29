@@ -43,7 +43,8 @@ enum YummyDTO {
                 year: year,
                 shikimoriID: remoteIds?.shikimoriId.flatMap { $0 > 0 ? $0 : nil },
                 malID: remoteIds?.myanimelistId.flatMap { $0 > 0 ? $0 : nil },
-                posterURL: TextCleaner.absoluteURL(poster?.big ?? poster?.medium ?? poster?.fullsize, base: AppConfig.yummyBaseURL)
+                posterURL: TextCleaner.absoluteURL(poster?.big ?? poster?.medium ?? poster?.fullsize, base: AppConfig.yummyBaseURL),
+                webURL: animeUrl.flatMap { $0.isEmpty ? nil : AppConfig.yummySiteURL.appendingPathComponent("catalog/item/\($0)") }
             )
         }
     }

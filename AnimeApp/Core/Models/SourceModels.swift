@@ -27,6 +27,8 @@ struct SourceTitle: Hashable, Codable, Sendable {
     var shikimoriID: Int?
     var malID: Int?
     var posterURL: URL?
+    /// The title's page on the source's website, for watching there when an embed fails.
+    var webURL: URL? = nil
 }
 
 struct TimeRange: Hashable, Codable, Sendable {

@@ -9,4 +9,6 @@ struct PlayerContext: Identifiable {
     let startIndex: Int
     /// Other copies of each episode in the same voice (other embedded players), best first.
     var alternatives: [String: [SourceEpisode]] = [:]
+    /// The title on the source's website (YummyAnime), offered when an embed won't load.
+    var webURL: URL?
 }
