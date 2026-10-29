@@ -7,6 +7,7 @@ final class HomeViewModel: ObservableObject {
     @Published private(set) var updated: Loadable<[Anime]> = .idle
     @Published private(set) var popular: Loadable<[Anime]> = .idle
     @Published private(set) var top: Loadable<[Anime]> = .idle
+    @Published private(set) var genres: [Genre] = []
 
     static let ongoingQuery: CatalogQuery = {
         var query = CatalogQuery()
@@ -34,7 +35,8 @@ final class HomeViewModel: ObservableObject {
         async let second: Void = loadUpdated()
         async let third: Void = loadPopular()
         async let fourth: Void = loadTop()
-        _ = await (first, second, third, fourth)
+        async let fifth: Void = loadGenres()
+        _ = await (first, second, third, fourth, fifth)
     }
 
     func loadOngoing() async {
@@ -45,6 +47,12 @@ final class HomeViewModel: ObservableObject {
     func loadPopular() async {
         popular = .loading
         popular = await result { try await self.services.shikimori.animes(Self.popularQuery, page: 1, limit: 20) }
+    }
+
+    /// Genre shortcuts; quietly skipped if they fail, the shelves matter more.
+    func loadGenres() async {
+        guard genres.isEmpty else { return }
+        genres = ((try? await services.shikimori.genres()) ?? []).filter { $0.kind == "genre" }
     }
 
     func loadTop() async {

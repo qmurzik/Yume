@@ -12,6 +12,9 @@ struct HomeView: View {
                     if !library.continueWatching.isEmpty {
                         ContinueWatchingShelf(records: library.continueWatching)
                     }
+                    if !model.genres.isEmpty {
+                        GenreShortcuts(genres: model.genres).transition(.opacity)
+                    }
                     AnimeShelf(title: "Онгоинги", subtitle: "Выходят прямо сейчас", state: model.ongoing,
                                seeAll: CatalogRoute(title: "Онгоинги", query: HomeViewModel.ongoingQuery)) {
                         Task { await model.loadOngoing() }
@@ -30,6 +33,7 @@ struct HomeView: View {
                     }
                 }
                 .padding(.bottom, 24)
+                .animation(Motion.fade, value: model.genres.isEmpty)
             }
             .ignoresSafeArea(edges: .top)
             .screenBackground()
@@ -52,6 +56,48 @@ struct HomeView: View {
             }
         }
         .animation(.easeInOut(duration: 0.5), value: model.ongoing.phaseKey)
+    }
+}
+
+/// Horizontal row of genres, each opening the catalog filtered by it.
+private struct GenreShortcuts: View {
+    let genres: [Genre]
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            SectionHeader(title: "Жанры")
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    ForEach(Array(genres.enumerated()), id: \.element.id) { index, genre in
+                        NavigationLink(value: CatalogRoute(title: genre.title, query: CatalogQuery(genreIDs: [genre.id]))) {
+                            Chip(title: genre.title, systemImage: Self.icon(for: genre.name))
+                        }
+                        .buttonStyle(PressableStyle())
+                        .appear(index)
+                    }
+                }
+                .padding(.horizontal)
+            }
+        }
+    }
+
+    static func icon(for name: String) -> String {
+        switch name {
+        case "Action": return "bolt.fill"
+        case "Adventure": return "map.fill"
+        case "Comedy": return "face.smiling"
+        case "Drama": return "theatermasks.fill"
+        case "Fantasy": return "sparkles"
+        case "Horror": return "moon.fill"
+        case "Mystery": return "magnifyingglass"
+        case "Romance": return "heart.fill"
+        case "Sci-Fi": return "atom"
+        case "Slice of Life": return "cup.and.saucer.fill"
+        case "Sports": return "figure.run"
+        case "Supernatural": return "wand.and.stars"
+        case "Suspense": return "eye.fill"
+        default: return "tag.fill"
+        }
     }
 }
 

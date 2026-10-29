@@ -15,6 +15,8 @@ final class PlayerViewModel: NSObject, ObservableObject {
 
     @Published private(set) var phase: Phase = .loading
     @Published private(set) var index: Int
+    /// The playlist; an entry is swapped when the user switches to another player for it.
+    @Published private(set) var episodes: [SourceEpisode]
     @Published private(set) var qualities: [StreamQuality] = []
     @Published private(set) var quality: StreamQuality?
 
@@ -65,6 +67,7 @@ final class PlayerViewModel: NSObject, ObservableObject {
         self.context = context
         self.library = library
         self.index = context.startIndex
+        self.episodes = context.episodes
         self.source = services.sources.source(context.source)
         super.init()
         let savedRate = UserDefaults.standard.float(forKey: Self.rateKey)
@@ -84,10 +87,23 @@ final class PlayerViewModel: NSObject, ObservableObject {
         setUpRemoteCommands()
     }
 
-    var episode: SourceEpisode { context.episodes[index] }
-    var hasNext: Bool { index + 1 < context.episodes.count }
+    var episode: SourceEpisode { episodes[index] }
+    var hasNext: Bool { index + 1 < episodes.count }
     var hasPrevious: Bool { index > 0 }
-    var nextEpisode: SourceEpisode? { hasNext ? context.episodes[index + 1] : nil }
+    var nextEpisode: SourceEpisode? { hasNext ? episodes[index + 1] : nil }
+
+    /// Other players hosting the current episode in the same voice.
+    var alternatives: [SourceEpisode] {
+        context.alternatives[LibraryData.episodeKey(episode.number)] ?? []
+    }
+
+    /// Replays the current episode from another player (YummyAnime).
+    func switchPlayer(to copy: SourceEpisode) {
+        guard copy.id != episode.id, copy.number == episode.number else { return }
+        saveProgress()
+        episodes[index] = copy
+        load(index: index, force: true)
+    }
     var isNative: Bool { if case .native = phase { return true }; return false }
 
     var autoplayEnabled: Bool {
@@ -104,7 +120,7 @@ final class PlayerViewModel: NSObject, ObservableObject {
     func retry() { load(index: index) }
 
     func play(episodeAt newIndex: Int) {
-        guard context.episodes.indices.contains(newIndex), newIndex != index else { return }
+        guard episodes.indices.contains(newIndex), newIndex != index else { return }
         saveProgress()
         load(index: newIndex)
     }
@@ -121,8 +137,8 @@ final class PlayerViewModel: NSObject, ObservableObject {
         load(index: index - 1)
     }
 
-    private func load(index newIndex: Int) {
-        if newIndex != index { saveProgress() }
+    private func load(index newIndex: Int, force: Bool = false) {
+        if newIndex != index && !force { saveProgress() }
         loadTask?.cancel()
         cancelAutoplay()
         index = newIndex
