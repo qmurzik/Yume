@@ -32,7 +32,7 @@ extension AnimeSource {
 struct SourceRegistry: Sendable {
     var sources: [any AnimeSource]
 
-    static let live = SourceRegistry(sources: [AniLibriaSource(), AnimeVostSource(), YummyAnimeSource()])
+    static let live = SourceRegistry(sources: [AniLibriaSource(), AnimeVostSource(), Anime365Source(), YummyAnimeSource()])
 
     var available: [any AnimeSource] { sources.filter(\.isAvailable) }
 

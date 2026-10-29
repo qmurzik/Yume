@@ -238,7 +238,10 @@ final class PlayerViewModel: NSObject, ObservableObject {
 
     private func play(_ quality: StreamQuality, at position: Double) {
         self.quality = quality
-        let item = AVPlayerItem(url: quality.url)
+        // Signed-in sources (Anime365) may need the session cookies for the video itself.
+        let cookies = HTTPCookieStorage.shared.cookies(for: quality.url) ?? []
+        let asset = AVURLAsset(url: quality.url, options: [AVURLAssetHTTPCookiesKey: cookies])
+        let item = AVPlayerItem(asset: asset)
         item.preferredForwardBufferDuration = 30
         pendingSeek = position > 0 ? position : nil
         itemObservations = [

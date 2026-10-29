@@ -1,0 +1,148 @@
+{
+ "data": [
+  {
+   "id": 3829837,
+   "isActive": 1,
+   "qualityType": "bd",
+   "typeKind": "voice",
+   "typeLang": "ru",
+   "episodeId": 62546,
+   "embedUrl": "https://smotret-anime.co/translations/embed/3829837",
+   "authorsSummary": "AniLibria (Eladiel & Zendos)",
+   "duration": 1540.963,
+   "height": 1080
+  },
+  {
+   "id": 4044957,
+   "isActive": 1,
+   "qualityType": "bd",
+   "typeKind": "voice",
+   "typeLang": "ru",
+   "episodeId": 62546,
+   "embedUrl": "https://smotret-anime.co/translations/embed/4044957",
+   "authorsSummary": "Wakanim",
+   "duration": 1541.82,
+   "height": 1080
+  },
+  {
+   "id": 4045007,
+   "isActive": 1,
+   "qualityType": "bd",
+   "typeKind": "sub",
+   "typeLang": "ru",
+   "episodeId": 62546,
+   "embedUrl": "https://smotret-anime.co/translations/embed/4045007",
+   "authorsSummary": "Firegorn Team",
+   "duration": 1541.82,
+   "height": 1080
+  },
+  {
+   "id": 3237609,
+   "isActive": 1,
+   "qualityType": "bd",
+   "typeKind": "voice",
+   "typeLang": "en",
+   "episodeId": 62546,
+   "embedUrl": "https://smotret-anime.co/translations/embed/3237609",
+   "authorsSummary": "SCY",
+   "duration": 1540.954,
+   "height": 1080
+  },
+  {
+   "id": 3829838,
+   "isActive": 1,
+   "qualityType": "bd",
+   "typeKind": "voice",
+   "typeLang": "ru",
+   "episodeId": 62538,
+   "embedUrl": "https://smotret-anime.co/translations/embed/3829838",
+   "authorsSummary": "AniLibria (Eladiel & Zendos)",
+   "duration": 1450.999,
+   "height": 1080
+  },
+  {
+   "id": 4044958,
+   "isActive": 1,
+   "qualityType": "bd",
+   "typeKind": "voice",
+   "typeLang": "ru",
+   "episodeId": 62538,
+   "embedUrl": "https://smotret-anime.co/translations/embed/4044958",
+   "authorsSummary": "Wakanim",
+   "duration": 1450.95,
+   "height": 1080
+  },
+  {
+   "id": 4860217,
+   "isActive": 1,
+   "qualityType": "bd",
+   "typeKind": "sub",
+   "typeLang": "ru",
+   "episodeId": 62538,
+   "embedUrl": "https://smotret-anime.co/translations/embed/4860217",
+   "authorsSummary": "Crunchyroll",
+   "duration": 1450.98,
+   "height": 1080
+  },
+  {
+   "id": 3237610,
+   "isActive": 1,
+   "qualityType": "bd",
+   "typeKind": "voice",
+   "typeLang": "en",
+   "episodeId": 62538,
+   "embedUrl": "https://smotret-anime.co/translations/embed/3237610",
+   "authorsSummary": "SCY",
+   "duration": 1450.992,
+   "height": 1080
+  },
+  {
+   "id": 3829839,
+   "isActive": 1,
+   "qualityType": "bd",
+   "typeKind": "voice",
+   "typeLang": "ru",
+   "episodeId": 62527,
+   "embedUrl": "https://smotret-anime.co/translations/embed/3829839",
+   "authorsSummary": "AniLibria (Eladiel & Zendos)",
+   "duration": 1450.999,
+   "height": 1080
+  },
+  {
+   "id": 4044959,
+   "isActive": 1,
+   "qualityType": "bd",
+   "typeKind": "voice",
+   "typeLang": "ru",
+   "episodeId": 62527,
+   "embedUrl": "https://smotret-anime.co/translations/embed/4044959",
+   "authorsSummary": "Wakanim",
+   "duration": 1450.991,
+   "height": 1080
+  },
+  {
+   "id": 3036405,
+   "isActive": 1,
+   "qualityType": "tv",
+   "typeKind": "sub",
+   "typeLang": "ru",
+   "episodeId": 62527,
+   "embedUrl": "https://smotret-anime.co/translations/embed/3036405",
+   "authorsSummary": "Wakanim",
+   "duration": 1462.59,
+   "height": 1080
+  },
+  {
+   "id": 1972937,
+   "isActive": 1,
+   "qualityType": "bd",
+   "typeKind": "voice",
+   "typeLang": "en",
+   "episodeId": 62527,
+   "embedUrl": "https://smotret-anime.co/translations/embed/1972937",
+   "authorsSummary": "Дублированный",
+   "duration": 1450.991,
+   "height": 1080
+  }
+ ]
+}

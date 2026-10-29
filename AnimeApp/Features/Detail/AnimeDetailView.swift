@@ -83,6 +83,9 @@ private struct AnimeDetailContent: View {
         .onReceive(NotificationCenter.default.publisher(for: YummyCredentials.didChange)) { _ in
             model.refreshSources()
         }
+        .onReceive(NotificationCenter.default.publisher(for: Anime365Account.didChange)) { _ in
+            model.refreshSources()
+        }
     }
 
     private func toolbarIcon(_ name: String, tint: Color = .white) -> some View {

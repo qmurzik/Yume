@@ -1,0 +1,49 @@
+{
+ "data": {
+  "id": 4036,
+  "myAnimeListId": 16498,
+  "year": 2013,
+  "type": "tv",
+  "titles": {
+   "ru": "Атака титанов",
+   "romaji": "Shingeki no Kyojin",
+   "en": "Attack on Titan",
+   "ja": "進撃の巨人 attack on titan"
+  },
+  "url": "https://smotret-anime.co/catalog/shingeki-no-kyojin-4036",
+  "episodes": [
+   {
+    "id": 118930,
+    "episodeFull": "Трейлер",
+    "episodeInt": 1,
+    "episodeTitle": "",
+    "episodeType": "preview",
+    "isActive": 1
+   },
+   {
+    "id": 62546,
+    "episodeFull": "1 серия",
+    "episodeInt": 1,
+    "episodeTitle": "",
+    "episodeType": "tv",
+    "isActive": 1
+   },
+   {
+    "id": 62538,
+    "episodeFull": "2 серия",
+    "episodeInt": 2,
+    "episodeTitle": "",
+    "episodeType": "tv",
+    "isActive": 1
+   },
+   {
+    "id": 62527,
+    "episodeFull": "3 серия",
+    "episodeInt": 3,
+    "episodeTitle": "",
+    "episodeType": "tv",
+    "isActive": 1
+   }
+  ]
+ }
+}

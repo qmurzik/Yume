@@ -5,6 +5,9 @@ struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @FocusState private var focused: Field?
     @State private var showManual = false
+    @State private var showAnime365Login = false
+    @State private var anime365Name = Anime365Account.shared.name
+    @State private var anime365Premium = Anime365Account.shared.premiumUntil
     @AppStorage("player.autoplayNext") private var autoplay = true
     @AppStorage("player.preferredQuality") private var preferredQuality = 1080
 
@@ -14,6 +17,7 @@ struct SettingsView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
+                    anime365Card
                     yummyCard
                     sourcesCard
                     playerCard
@@ -24,6 +28,11 @@ struct SettingsView: View {
                 .animation(.easeInOut, value: model.error)
             }
             .scrollDismissesKeyboard(.interactively)
+            .sheet(isPresented: $showAnime365Login) { Anime365LoginView() }
+            .onReceive(NotificationCenter.default.publisher(for: Anime365Account.didChange)) { _ in
+                anime365Name = Anime365Account.shared.name
+                anime365Premium = Anime365Account.shared.premiumUntil
+            }
             .screenBackground()
             .navigationTitle("Настройки")
             .navigationBarTitleDisplayMode(.inline)
@@ -34,6 +43,53 @@ struct SettingsView: View {
             }
         }
         .preferredColorScheme(.dark)
+    }
+
+    // MARK: Anime365
+
+    private var anime365Card: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(spacing: 12) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 12, style: .continuous).fill(Theme.accentFill)
+                    Text("365").font(.display(13, .black, relativeTo: .caption)).foregroundStyle(Theme.cream)
+                }
+                .frame(width: 46, height: 46)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Anime365").font(.headline)
+                    Text(anime365Status)
+                        .font(.caption)
+                        .foregroundStyle(anime365Name == nil ? Theme.secondaryText : (anime365Premium == nil ? Color.orange : Color.green))
+                }
+                Spacer()
+            }
+            Text("Десятки русских озвучек почти для любого тайтла, видео до 1080p играет в нашем плеере. Ссылки на видео Anime365 выдаёт только аккаунтам с активной подпиской на их сайте.")
+                .font(.footnote)
+                .foregroundStyle(Theme.secondaryText)
+            if anime365Name == nil {
+                Button {
+                    showAnime365Login = true
+                } label: {
+                    Text("Войти на сайте Anime365").frame(maxWidth: .infinity)
+                }
+                .buttonStyle(PrimaryButtonStyle())
+            } else {
+                Button(role: .destructive) {
+                    Anime365Account.shared.signOut()
+                } label: {
+                    Text("Выйти").frame(maxWidth: .infinity)
+                }
+                .buttonStyle(GlassButtonStyle())
+            }
+        }
+        .padding(16)
+        .card(radius: 20)
+    }
+
+    private var anime365Status: String {
+        guard let name = anime365Name else { return "Не подключено" }
+        if let until = anime365Premium { return "\(name) · подписка до \(until.prefix(10))" }
+        return "\(name) · без подписки, видео не откроется"
     }
 
     // MARK: YummyAnime
@@ -183,6 +239,7 @@ struct SettingsView: View {
             Text("Источники видео").font(.headline)
             sourceRow("AniLibria", detail: "Своя озвучка, HLS до 1080p, пропуск опенингов", on: true)
             sourceRow("AnimeVost", detail: "Своя озвучка, MP4 480p и 720p", on: true)
+            sourceRow("Anime365", detail: "Десятки озвучек, нужен аккаунт с подпиской", on: anime365Name != nil)
             sourceRow("YummyAnime", detail: "Много озвучек и субтитров, встроенные плееры", on: model.isConnected)
             Text("Если тайтла нет в одном источнике, карточка сама пробует следующий.")
                 .font(.caption)

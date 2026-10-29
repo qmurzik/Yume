@@ -3,6 +3,7 @@ import Foundation
 enum SourceID: String, Codable, Sendable, CaseIterable, Identifiable {
     case aniLibria = "anilibria"
     case animeVost = "animevost"
+    case anime365 = "anime365"
     case yummy = "yummyanime"
 
     var id: String { rawValue }
@@ -11,6 +12,7 @@ enum SourceID: String, Codable, Sendable, CaseIterable, Identifiable {
         switch self {
         case .aniLibria: return "AniLibria"
         case .animeVost: return "AnimeVost"
+        case .anime365: return "Anime365"
         case .yummy: return "YummyAnime"
         }
     }

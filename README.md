@@ -32,6 +32,7 @@
 | [Shikimori](https://shikimori.io/api/doc) | каталог, поиск, жанры, рейтинги, постеры, описания, похожие | GraphQL `POST /api/graphql`, REST `GET /api/animes/:id/similar` |
 | [AniLibria](https://aniliberty.top/api/docs/v1) | релизы, серии, HLS 480/720/1080, тайминги опенинга, расписание | `GET /api/v1/app/search/releases`, `/anime/releases/{id}`, `/anime/releases/episodes/{id}`, `/anime/releases/latest`, `/anime/schedule/week` |
 | [AnimeVost](https://api.animevost.org/v1) | своя озвучка, прямые MP4 480p/720p | `POST /v1/search`, `POST /v1/playlist` |
+| [Anime365](https://smotret-anime.org/api/me) | десятки русских озвучек, MP4 до 1080p | `GET /api/series?myAnimeListId=`, `/api/series/{id}`, `/api/translations?seriesId=`, `/api/translations/embed/{id}` |
 | [YummyAnime](https://api.yani.tv/swagger) | дополнительные озвучки и плееры | `GET /anime?shikimori_ids=`, `/search`, `/anime/{id}/videos` |
 
 - Shikimori требует название приложения в `User-Agent` и ограничивает API до 5 запросов в секунду
@@ -50,6 +51,13 @@
 - YummyAnime отдаёт не прямые потоки, а официальные встраиваемые плееры (Kodik, Aksor, Alloha…),
   поэтому такие серии открываются во встроенном веб-плеере. Защиту и DRM приложение не обходит.
 
+### Anime365
+
+Каталог и список переводов Anime365 открыты, а ссылки на видео сайт выдаёт только вошедшему пользователю
+с активной подпиской. Вход — «Моё» → ⚙️ → Anime365: открывается страница входа самого сайта, после входа
+приложение использует эту сессию. Тайтлы сопоставляются по ID MyAnimeList. Берутся русские озвучки;
+субтитры Anime365 приходят отдельными ASS-файлами, которые AVPlayer не показывает, поэтому их нет.
+
 ### Покрытие и почему не другие источники
 
 Проверка на 50 популярных тайтлах и онгоингах Shikimori: AniLibria нашла 27, вместе с AnimeVost — 39.
@@ -58,7 +66,8 @@
 
 - **Shikimori** сам видео не хранит: в API есть только трейлеры, опенинги и эндинги с YouTube.
 - **AniLib** не имеет публичной документации API, а сервер закрывает доступ защитой от ботов (HTTP 403). Обходить её приложение не будет.
-- **Anime365** без аккаунта с подпиской отдаёт пустой плеер (`require-activation`), поэтому смотреть через него анонимно нельзя.
+- **Встроенные плееры YummyAnime** (Kodik, Alloha, Aksor, CVH) вне сайта YummyAnime отказывают специально; приложение
+  не обходит эту защиту, а переключается на другой плеер или предлагает сайт.
 - **Kodik** требует партнёрский токен, который выдаётся по заявке.
 
 ## Хранение данных: почему JSON-файл
