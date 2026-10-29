@@ -58,18 +58,18 @@ final class AnimeDetailViewModel: ObservableObject {
     /// Embedded players offering the selected voice (YummyAnime), most complete first.
     var players: [String] {
         guard let voice = selectedVoice else { return [] }
-        return EpisodeGrouping.players(episodesState.value ?? [], voice: voice)
+        return EpisodeGrouping.players(episodesState.value ?? [], voice: voice, deprioritized: EmbedHealth.shared.deprioritized())
     }
 
     /// One copy per episode: the chosen player, filling gaps from the others.
     var episodes: [SourceEpisode] {
         guard let all = episodesState.value, let voice = selectedVoice else { return [] }
-        return EpisodeGrouping.episodes(all, voice: voice, preferredPlayer: player)
+        return EpisodeGrouping.episodes(all, voice: voice, preferredPlayer: player, deprioritized: EmbedHealth.shared.deprioritized())
     }
 
     var alternatives: [String: [SourceEpisode]] {
         guard let all = episodesState.value, let voice = selectedVoice else { return [:] }
-        return EpisodeGrouping.alternatives(all, voice: voice, preferredPlayer: player)
+        return EpisodeGrouping.alternatives(all, voice: voice, preferredPlayer: player, deprioritized: EmbedHealth.shared.deprioritized())
     }
 
     func load() async {

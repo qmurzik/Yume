@@ -49,3 +49,17 @@ final class EpisodeGroupingTests: XCTestCase {
         XCTAssertEqual(EpisodeGrouping.episodes(all, voice: "AniLibria", preferredPlayer: nil).count, 3)
     }
 }
+
+final class EmbedHealthTests: XCTestCase {
+    func testRepeatedFailuresDeprioritizeForAWeek() {
+        let defaults = UserDefaults(suiteName: "embed-health-\(UUID().uuidString)")!
+        let health = EmbedHealth(defaults: defaults)
+        let now = Date(timeIntervalSince1970: 1_000_000)
+        health.recordFailure(player: "Aksor", now: now)
+        XCTAssertFalse(health.deprioritized(now: now).contains("Aksor"), "one failure may be a fluke")
+        health.recordFailure(player: "Aksor", now: now)
+        XCTAssertTrue(health.deprioritized(now: now).contains("Aksor"))
+        XCTAssertTrue(health.deprioritized(now: now).contains("Kodik"), "restricted players stay last")
+        XCTAssertFalse(health.deprioritized(now: now.addingTimeInterval(8 * 24 * 3600)).contains("Aksor"))
+    }
+}

@@ -22,32 +22,35 @@ enum EpisodeGrouping {
     static let restrictedPlayers: Set<String> = ["Kodik"]
 
     /// Players of a voice: working ones first, then most complete.
-    static func players(_ all: [SourceEpisode], voice: String) -> [String] {
+    static func players(_ all: [SourceEpisode], voice: String, deprioritized: Set<String> = restrictedPlayers) -> [String] {
         let counts = Dictionary(grouping: all.filter { $0.voice == voice }, by: { $0.player ?? "" })
             .mapValues { Set($0.map(\.number)).count }
-        func works(_ name: String) -> Int { restrictedPlayers.contains(name) ? 0 : 1 }
+        func works(_ name: String) -> Int { deprioritized.contains(name) ? 0 : 1 }
         return counts.keys.filter { !$0.isEmpty }.sorted {
             (works($0), counts[$0] ?? 0, $1) > (works($1), counts[$1] ?? 0, $0)
         }
     }
 
     /// One copy per episode number, sorted by number.
-    static func episodes(_ all: [SourceEpisode], voice: String, preferredPlayer: String?) -> [SourceEpisode] {
-        let ranking = rank(all, voice: voice, preferredPlayer: preferredPlayer)
+    static func episodes(_ all: [SourceEpisode], voice: String, preferredPlayer: String?,
+                         deprioritized: Set<String> = restrictedPlayers) -> [SourceEpisode] {
+        let ranking = rank(all, voice: voice, preferredPlayer: preferredPlayer, deprioritized: deprioritized)
         return Dictionary(grouping: all.filter { $0.voice == voice }, by: \.number)
             .compactMap { _, copies in copies.min { ranking($0) < ranking($1) } }
             .sorted { $0.number < $1.number }
     }
 
     /// Every copy of every episode of a voice, best first; keyed like `LibraryData.episodeKey`.
-    static func alternatives(_ all: [SourceEpisode], voice: String, preferredPlayer: String?) -> [String: [SourceEpisode]] {
-        let ranking = rank(all, voice: voice, preferredPlayer: preferredPlayer)
+    static func alternatives(_ all: [SourceEpisode], voice: String, preferredPlayer: String?,
+                             deprioritized: Set<String> = restrictedPlayers) -> [String: [SourceEpisode]] {
+        let ranking = rank(all, voice: voice, preferredPlayer: preferredPlayer, deprioritized: deprioritized)
         return Dictionary(grouping: all.filter { $0.voice == voice }, by: { LibraryData.episodeKey($0.number) })
             .mapValues { $0.sorted { ranking($0) < ranking($1) } }
     }
 
-    private static func rank(_ all: [SourceEpisode], voice: String, preferredPlayer: String?) -> (SourceEpisode) -> Int {
-        var order = players(all, voice: voice)
+    private static func rank(_ all: [SourceEpisode], voice: String, preferredPlayer: String?,
+                             deprioritized: Set<String>) -> (SourceEpisode) -> Int {
+        var order = players(all, voice: voice, deprioritized: deprioritized)
         if let preferredPlayer, let index = order.firstIndex(of: preferredPlayer) {
             order.remove(at: index)
             order.insert(preferredPlayer, at: 0)

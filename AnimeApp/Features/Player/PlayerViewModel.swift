@@ -36,6 +36,11 @@ final class PlayerViewModel: NSObject, ObservableObject {
     /// Seconds left before the next episode starts by itself; nil when no countdown runs.
     @Published private(set) var autoplayCountdown: Int?
 
+    /// Short note shown after switching away from a player that refused to play.
+    @Published private(set) var embedNotice: String?
+    /// Every copy of the current episode failed; the website is the remaining option.
+    @Published private(set) var embedsExhausted = false
+
     @Published private(set) var isPictureInPicturePossible = false
     @Published private(set) var isPictureInPictureActive = false
 
@@ -102,7 +107,31 @@ final class PlayerViewModel: NSObject, ObservableObject {
         guard copy.id != episode.id, copy.number == episode.number else { return }
         saveProgress()
         episodes[index] = copy
+        embedsExhausted = false
         load(index: index, force: true)
+    }
+
+    /// Copies of the current episode that already refused to play.
+    private var failedCopies: Set<String> = []
+
+    /// Called by the web player when the page shows an error instead of the episode.
+    func embedFailed(reason: String) {
+        guard case .embed = phase else { return }
+        let failed = episode
+        failedCopies.insert(failed.id)
+        if let player = failed.player { EmbedHealth.shared.recordFailure(player: player) }
+        if let next = alternatives.first(where: { !failedCopies.contains($0.id) }) {
+            embedNotice = "\(failed.player ?? "Плеер") не открыл серию (\(reason)) — включили \(next.player ?? "другой плеер")"
+            switchPlayer(to: next)
+            Task { [weak self] in
+                try? await Task.sleep(nanoseconds: 5_000_000_000)
+                self?.embedNotice = nil
+            }
+        } else {
+            embedNotice = nil
+            embedsExhausted = true
+            phase = .failed(APIError.server("Ни один плеер YummyAnime не открыл эту серию здесь. Посмотрите её на сайте YummyAnime или выберите другую озвучку."))
+        }
     }
     var isNative: Bool { if case .native = phase { return true }; return false }
 
@@ -138,6 +167,8 @@ final class PlayerViewModel: NSObject, ObservableObject {
     }
 
     private func load(index newIndex: Int, force: Bool = false) {
+        // Switching players keeps the list of copies that already failed for this episode.
+        let switchingCopy = force && newIndex == index
         if newIndex != index && !force { saveProgress() }
         loadTask?.cancel()
         cancelAutoplay()
@@ -149,6 +180,10 @@ final class PlayerViewModel: NSObject, ObservableObject {
         stream = nil
         qualities = []
         failedQualities = []
+        if !switchingCopy {
+            failedCopies = []
+            embedsExhausted = false
+        }
         currentTime = 0
         duration = episode.duration ?? 0
         bufferedTime = 0
