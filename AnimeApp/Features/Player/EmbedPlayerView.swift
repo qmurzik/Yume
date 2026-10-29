@@ -121,3 +121,9 @@ struct SafariView: UIViewControllerRepresentable {
 
     func updateUIViewController(_ controller: SFSafariViewController, context: Context) {}
 }
+
+/// A web page to present in `SafariView` with `.sheet(item:)`.
+struct SiteLink: Identifiable {
+    let url: URL
+    var id: String { url.absoluteString }
+}

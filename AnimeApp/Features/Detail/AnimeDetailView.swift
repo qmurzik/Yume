@@ -21,6 +21,7 @@ private struct AnimeDetailContent: View {
     @State private var descriptionExpanded = false
     @State private var rangeIndex = 0
     @State private var showSettings = false
+    @State private var siteLink: SiteLink?
 
     private static let headerHeight: CGFloat = 420
     private static let rangeSize = 50
@@ -76,6 +77,9 @@ private struct AnimeDetailContent: View {
         }
         .fullScreenCover(item: $player) { context in
             PlayerScreen(context: context, library: library)
+        }
+        .sheet(item: $siteLink) { link in
+            SafariView(url: link.url).ignoresSafeArea()
         }
         .sheet(isPresented: $showSettings, onDismiss: { model.refreshSources() }) {
             SettingsView()
@@ -404,6 +408,27 @@ private struct AnimeDetailContent: View {
 
     @ViewBuilder
     private var sourceNotes: some View {
+        // YummyAnime's players only work reliably on its own site, which is free; offer it up front.
+        if model.sourceID == .yummy, let url = model.currentWebURL {
+            HStack(spacing: 12) {
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("Все плееры — на сайте YummyAnime").font(.subheadline.weight(.semibold)).foregroundStyle(Theme.cream)
+                    Text("Встроенные плееры часто не открываются вне сайта. На сайте они работают, открывается прямо в приложении.")
+                        .font(.caption)
+                        .foregroundStyle(Theme.secondaryText)
+                }
+                Spacer(minLength: 8)
+                Button {
+                    Haptics.tap()
+                    siteLink = SiteLink(url: url)
+                } label: {
+                    Label("Сайт", systemImage: "safari").font(.footnote.weight(.bold))
+                }
+                .buttonStyle(PrimaryButtonStyle())
+            }
+            .padding(12)
+            .card(radius: 14)
+        }
         if !model.disabledSources.isEmpty {
             Button {
                 showSettings = true
