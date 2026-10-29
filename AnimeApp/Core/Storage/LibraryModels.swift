@@ -68,6 +68,8 @@ struct LibraryData: Codable, Sendable, Equatable {
     /// Per title, per episode number ("1", "12.5").
     var progress: [String: [String: EpisodeProgress]] = [:]
     var lastVoice: [String: String] = [:]
+    /// Optional so libraries saved by older versions still decode.
+    var lastPlayer: [String: String]?
     var lastSource: [String: SourceID] = [:]
 
     static func episodeKey(_ number: Double) -> String {

@@ -43,12 +43,14 @@ struct SourceEpisode: Identifiable, Hashable, Codable, Sendable {
     let id: String
     var number: Double
     var title: String?
-    /// Voice-over team or "Субтитры", plus the player name for embed sources.
+    /// Voice-over team or "Субтитры".
     var voice: String
     var duration: Double?
     var opening: TimeRange?
     var ending: TimeRange?
     var previewURL: URL?
+    /// Embedded player hosting this copy (YummyAnime offers one voice-over in several players).
+    var player: String? = nil
 
     var numberText: String {
         number.rounded() == number ? String(Int(number)) : String(number)

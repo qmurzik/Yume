@@ -8,7 +8,8 @@ struct AnimeDetailView: View {
         AnimeDetailContent(model: AnimeDetailViewModel(
             route: route,
             preferredSource: library.preferredSource(animeID: route.id),
-            preferredVoice: library.preferredVoice(animeID: route.id)
+            preferredVoice: library.preferredVoice(animeID: route.id),
+            preferredPlayer: library.preferredPlayer(animeID: route.id)
         ))
     }
 }
@@ -70,6 +71,9 @@ private struct AnimeDetailContent: View {
             }
         }
         .onChange(of: model.episodes.count) { _ in rangeIndex = defaultRange }
+        .onChange(of: model.player) { player in
+            library.rememberPlayer(animeID: model.animeID, player: player)
+        }
         .fullScreenCover(item: $player) { context in
             PlayerScreen(context: context, library: library)
         }
@@ -160,6 +164,11 @@ private struct AnimeDetailContent: View {
                                 Tag(text: status.title, color: status == .ongoing ? Theme.pink : .white)
                             }
                         }
+                        if anime.status == .ongoing, let next = anime.nextEpisodeAt, next > Date() {
+                            Label("Новая серия \(next.formatted(.relative(presentation: .named)))", systemImage: "bell.fill")
+                                .font(.caption.weight(.semibold))
+                                .foregroundStyle(Theme.pink)
+                        }
                     }
                     Spacer(minLength: 0)
                 }
@@ -247,7 +256,8 @@ private struct AnimeDetailContent: View {
 
     private func play(index: Int, anime: Anime) {
         guard let source = model.sourceID, model.episodes.indices.contains(index) else { return }
-        player = PlayerContext(anime: SavedAnime(anime: anime), source: source, episodes: model.episodes, startIndex: index)
+        player = PlayerContext(anime: SavedAnime(anime: anime), source: source, episodes: model.episodes,
+                               startIndex: index, alternatives: model.alternatives)
     }
 
     // MARK: Info
@@ -348,14 +358,16 @@ private struct AnimeDetailContent: View {
                 EmptyStateView(title: "Серий пока нет", message: "Они появятся, когда выйдут.", systemImage: "clock")
             case .loaded:
                 voiceChips
+                playerChips
                 rangeChips
                 episodeList(anime)
-                    .id("\(model.sourceID?.rawValue ?? "")-\(model.voice ?? "")-\(rangeIndex)")
+                    .id("\(model.sourceID?.rawValue ?? "")-\(model.voice ?? "")-\(model.player ?? "")-\(rangeIndex)")
                     .transition(.opacity.combined(with: .move(edge: .bottom)))
             }
         }
         .animation(Motion.spring, value: model.episodesState.phaseKey)
         .animation(Motion.spring, value: model.voice)
+        .animation(Motion.spring, value: model.player)
         .animation(Motion.spring, value: rangeIndex)
         .animation(Motion.snappy, value: model.sourceID)
     }
@@ -424,7 +436,7 @@ private struct AnimeDetailContent: View {
                                 Haptics.selection()
                                 model.voice = voice
                             } label: {
-                                Chip(title: "\(voice) · \(model.voiceCounts[voice] ?? 0)",
+                                Chip(title: "\(voice) · \(model.voiceCounts[voice] ?? 0) эп.",
                                      systemImage: voice.localizedCaseInsensitiveContains("субтитр") ? "captions.bubble" : "waveform",
                                      isSelected: (model.voice ?? voices.first) == voice)
                             }
@@ -435,6 +447,38 @@ private struct AnimeDetailContent: View {
             }
         } else if let voice = voices.first {
             Label(voice, systemImage: "waveform").font(.footnote.weight(.semibold)).foregroundStyle(Theme.secondaryText)
+        }
+    }
+
+    /// YummyAnime: one voice-over is often hosted by several players; "Авто" takes the most complete
+    /// and fills its gaps from the others.
+    @ViewBuilder
+    private var playerChips: some View {
+        let players = model.players
+        if players.count > 1 {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Плеер").font(.caption.weight(.semibold)).foregroundStyle(Theme.tertiaryText)
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        Button {
+                            Haptics.selection()
+                            model.player = nil
+                        } label: {
+                            Chip(title: "Авто", systemImage: "wand.and.stars", isSelected: model.player == nil)
+                        }
+                        .buttonStyle(PressableStyle())
+                        ForEach(players, id: \.self) { name in
+                            Button {
+                                Haptics.selection()
+                                model.player = name
+                            } label: {
+                                Chip(title: name, systemImage: "play.rectangle", isSelected: model.player == name)
+                            }
+                            .buttonStyle(PressableStyle())
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -494,6 +538,19 @@ private struct AnimeDetailContent: View {
                     } label: {
                         Label(watched ? "Отметить непросмотренной" : "Отметить просмотренной",
                               systemImage: watched ? "eye.slash" : "eye")
+                    }
+                    if index > 0 {
+                        Button {
+                            Haptics.success()
+                            for previous in model.episodes[...index] {
+                                library.markWatched(true, anime: SavedAnime(anime: anime), episode: previous)
+                            }
+                        } label: {
+                            Label("Отметить просмотренными 1–\(episode.numberText)", systemImage: "checkmark.circle")
+                        }
+                    }
+                    if let player = episode.player {
+                        Text("Плеер: \(player)")
                     }
                 }
             }
@@ -574,6 +631,9 @@ private struct EpisodeRow: View {
                 HStack(spacing: 6) {
                     if let duration = episode.duration {
                         Text("\(Int((duration / 60).rounded())) мин.")
+                    }
+                    if let player = episode.player {
+                        Text(player)
                     }
                     if isCurrent {
                         Text("· Вы остановились здесь").foregroundStyle(Theme.pink)

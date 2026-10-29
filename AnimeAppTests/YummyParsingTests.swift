@@ -20,7 +20,8 @@ final class YummyParsingTests: XCTestCase {
     func testParsesVideos() throws {
         let episodes = try YummyParser.episodes(from: Fixture.data("yummy_videos"))
         XCTAssertEqual(episodes.count, 5)
-        let aksor = episodes.filter { $0.voice == "AniLibria · Aksor" }
+        XCTAssertTrue(episodes.allSatisfy { $0.voice == "AniLibria" })
+        let aksor = episodes.filter { $0.player == "Aksor" }
         XCTAssertEqual(aksor.map(\.number), [1, 2, 3])
         XCTAssertEqual(aksor[1].opening, TimeRange(start: 0, end: 89))
         XCTAssertEqual(aksor[0].ending, TimeRange(start: 1456, end: 1545))

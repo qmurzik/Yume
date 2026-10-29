@@ -79,9 +79,13 @@ enum YummyDTO {
         var voice: String {
             let dubbing = (data?.dubbing ?? "Без названия")
                 .replacingOccurrences(of: "Озвучка ", with: "")
-            let player = (data?.player ?? "")
-                .replacingOccurrences(of: "Плеер ", with: "")
-            return player.isEmpty ? dubbing : "\(dubbing) · \(player)"
+                .trimmingCharacters(in: .whitespaces)
+            return dubbing.isEmpty ? "Без названия" : dubbing
+        }
+
+        var player: String? {
+            let name = (data?.player ?? "").replacingOccurrences(of: "Плеер ", with: "").trimmingCharacters(in: .whitespaces)
+            return name.isEmpty ? nil : name
         }
 
         var model: SourceEpisode? {
@@ -96,7 +100,8 @@ enum YummyDTO {
                 duration: duration.flatMap { $0 > 0 ? $0 : nil },
                 opening: skips?.opening?.range,
                 ending: skips?.ending?.range,
-                previewURL: nil
+                previewURL: nil,
+                player: player
             )
         }
     }
@@ -118,6 +123,6 @@ enum YummyParser {
     static func episodes(from data: Data) throws -> [SourceEpisode] {
         try unwrap([YummyDTO.Video].self, data)
             .compactMap(\.model)
-            .sorted { ($0.voice, $0.number) < ($1.voice, $1.number) }
+            .sorted { ($0.voice, $0.number, $0.player ?? "") < ($1.voice, $1.number, $1.player ?? "") }
     }
 }

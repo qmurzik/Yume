@@ -7,4 +7,6 @@ struct PlayerContext: Identifiable {
     let source: SourceID
     let episodes: [SourceEpisode]
     let startIndex: Int
+    /// Other copies of each episode in the same voice (other embedded players), best first.
+    var alternatives: [String: [SourceEpisode]] = [:]
 }

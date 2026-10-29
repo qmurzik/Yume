@@ -8,7 +8,11 @@ final class AnimeDetailViewModel: ObservableObject {
     @Published private(set) var similar: Loadable<[Anime]> = .idle
     @Published private(set) var sourceID: SourceID?
     @Published private(set) var episodesState: Loadable<[SourceEpisode]> = .idle
-    @Published var voice: String?
+    @Published var voice: String? {
+        didSet { if voice != oldValue { player = nil } }
+    }
+    /// Preferred embedded player for the voice; nil means "most complete".
+    @Published var player: String?
 
     @Published private(set) var availableSources: [SourceID]
     /// Sources switched off, e.g. YummyAnime until the user signs in.
@@ -22,7 +26,11 @@ final class AnimeDetailViewModel: ObservableObject {
     private var preferredVoice: String?
     private var sourceTask: Task<Void, Never>?
 
-    init(route: AnimeRoute, preferredSource: SourceID?, preferredVoice: String?, services: AppServices = .live) {
+    private var preferredPlayer: String?
+
+    init(route: AnimeRoute, preferredSource: SourceID?, preferredVoice: String?, preferredPlayer: String? = nil,
+         services: AppServices = .live) {
+        self.preferredPlayer = preferredPlayer
         animeID = route.id
         anime = route.preview.map(Loadable.loaded) ?? .idle
         self.services = services
@@ -36,22 +44,29 @@ final class AnimeDetailViewModel: ObservableObject {
 
     var hasDetails: Bool { anime.value?.studios.isEmpty == false || anime.value?.description != nil }
 
-    /// Episodes per voice, for the voice chips.
-    var voiceCounts: [String: Int] {
-        Dictionary(grouping: episodesState.value ?? [], by: \.voice).mapValues(\.count)
-    }
+    /// Distinct episodes per voice, for the voice chips.
+    var voiceCounts: [String: Int] { EpisodeGrouping.episodeCounts(episodesState.value ?? []) }
 
     /// Voices sorted by how many episodes they have, most complete first.
-    var voices: [String] {
-        let all = episodesState.value ?? []
-        let counts = Dictionary(grouping: all, by: \.voice).mapValues(\.count)
-        return counts.keys.sorted { (counts[$0] ?? 0, $1) > (counts[$1] ?? 0, $0) }
+    var voices: [String] { EpisodeGrouping.voices(episodesState.value ?? []) }
+
+    private var selectedVoice: String? { voice ?? voices.first }
+
+    /// Embedded players offering the selected voice (YummyAnime), most complete first.
+    var players: [String] {
+        guard let voice = selectedVoice else { return [] }
+        return EpisodeGrouping.players(episodesState.value ?? [], voice: voice)
     }
 
+    /// One copy per episode: the chosen player, filling gaps from the others.
     var episodes: [SourceEpisode] {
-        guard let all = episodesState.value else { return [] }
-        let selected = voice ?? voices.first
-        return all.filter { $0.voice == selected }.sorted { $0.number < $1.number }
+        guard let all = episodesState.value, let voice = selectedVoice else { return [] }
+        return EpisodeGrouping.episodes(all, voice: voice, preferredPlayer: player)
+    }
+
+    var alternatives: [String: [SourceEpisode]] {
+        guard let all = episodesState.value, let voice = selectedVoice else { return [:] }
+        return EpisodeGrouping.alternatives(all, voice: voice, preferredPlayer: player)
     }
 
     func load() async {
@@ -175,5 +190,6 @@ final class AnimeDetailViewModel: ObservableObject {
         let options = voices
         if let current = voice, options.contains(current) { return }
         voice = preferredVoice.flatMap { options.contains($0) ? $0 : nil } ?? options.first
+        if let preferredPlayer, players.contains(preferredPlayer) { player = preferredPlayer }
     }
 }

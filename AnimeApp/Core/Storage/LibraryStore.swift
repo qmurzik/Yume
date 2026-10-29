@@ -68,6 +68,14 @@ final class LibraryStore: ObservableObject {
     }
 
     func preferredVoice(animeID: Int) -> String? { data.lastVoice[String(animeID)] }
+    func preferredPlayer(animeID: Int) -> String? { data.lastPlayer?[String(animeID)] }
+
+    func rememberPlayer(animeID: Int, player: String?) {
+        var players = data.lastPlayer ?? [:]
+        players[String(animeID)] = player
+        data.lastPlayer = players
+        scheduleSave()
+    }
     func preferredSource(animeID: Int) -> SourceID? { data.lastSource[String(animeID)] }
 
     func rememberChoice(animeID: Int, source: SourceID, voice: String) {
