@@ -151,7 +151,7 @@ private struct CatalogGrid: View {
     @ViewBuilder
     private var footer: some View {
         if model.isLoadingMore {
-            ProgressView().tint(Theme.pink).frame(maxWidth: .infinity).padding()
+            ProgressView().tint(Theme.accent).frame(maxWidth: .infinity).padding()
         } else if let error = model.loadMoreError {
             ErrorStateView(error: error, compact: true) { Task { await model.loadMore() } }
         } else if model.reachedEnd {

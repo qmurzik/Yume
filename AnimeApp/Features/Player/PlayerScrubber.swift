@@ -25,25 +25,25 @@ struct PlayerScrubber: View {
                 Capsule().fill(Color.white.opacity(0.38)).frame(width: width * fraction(buffered))
                 if let opening, duration > 0 {
                     Capsule()
-                        .fill(Theme.violet.opacity(0.7))
+                        .fill(Theme.gold.opacity(0.7))
                         .frame(width: max(2, width * (fraction(opening.end) - fraction(opening.start))))
                         .offset(x: width * fraction(opening.start))
                 }
-                Capsule().fill(Theme.accentGradient).frame(width: width * fraction(current))
+                Capsule().fill(Theme.accentFill).frame(width: width * fraction(current))
             }
             .frame(height: height)
             .overlay(alignment: .leading) {
                 Circle()
                     .fill(.white)
                     .frame(width: isScrubbing ? 22 : 14, height: isScrubbing ? 22 : 14)
-                    .shadow(color: Theme.pink.opacity(0.6), radius: 6)
+                    .shadow(color: Theme.accent.opacity(0.6), radius: 6)
                     .offset(x: width * fraction(current) - (isScrubbing ? 11 : 7))
             }
             .overlay(alignment: .leading) {
                 if isScrubbing {
                     Text(TimeFormat.string(current))
                         .font(.caption.weight(.bold).monospacedDigit())
-                        .foregroundStyle(.white)
+                        .foregroundStyle(Theme.cream)
                         .padding(.horizontal, 10)
                         .padding(.vertical, 6)
                         .background(.ultraThinMaterial, in: Capsule())

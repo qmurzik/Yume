@@ -66,6 +66,10 @@ targets:
           - UIInterfaceOrientationLandscapeLeft
           - UIInterfaceOrientationLandscapeRight
         YummyAppToken: $(YUMMY_APP_TOKEN)
+        UIAppFonts:
+          - Unbounded-Medium.ttf
+          - Unbounded-Bold.ttf
+          - Unbounded-Black.ttf
 
   AnimeAppTests:
     type: bundle.unit-test

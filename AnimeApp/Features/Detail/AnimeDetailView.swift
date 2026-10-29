@@ -56,7 +56,7 @@ private struct AnimeDetailContent: View {
                             Haptics.success()
                             library.toggleFavorite(SavedAnime(anime: anime))
                         } label: {
-                            toolbarIcon(library.isFavorite(anime.id) ? "heart.fill" : "heart", tint: library.isFavorite(anime.id) ? Theme.pink : .white)
+                            toolbarIcon(library.isFavorite(anime.id) ? "heart.fill" : "heart", tint: library.isFavorite(anime.id) ? Theme.accent : .white)
                         }
                         .accessibilityLabel(library.isFavorite(anime.id) ? "Убрать из избранного" : "В избранное")
                     }
@@ -120,7 +120,7 @@ private struct AnimeDetailContent: View {
                 }
                 .padding(.horizontal)
                 if !anime.related.isEmpty { related(anime) }
-                AnimeShelf(title: "Похожие", state: model.similar, emptyText: "Похожих тайтлов не нашлось") {
+                AnimeShelf(title: "Похожие", kicker: "おすすめ", state: model.similar, emptyText: "Похожих тайтлов не нашлось") {
                     Task { await model.loadSimilar() }
                 }
             }
@@ -139,6 +139,7 @@ private struct AnimeDetailContent: View {
                 BackdropImage(url: anime.posterURL ?? anime.posterPreviewURL, blur: 22)
                     .overlay(Theme.background.opacity(0.25))
                     .overlay(Theme.heroFade)
+                    .overlay(GrainOverlay(opacity: 0.12))
                     .frame(width: proxy.size.width, height: Self.headerHeight + pull)
                     .offset(y: -pull)
 
@@ -148,26 +149,24 @@ private struct AnimeDetailContent: View {
                         .shadow(color: .black.opacity(0.6), radius: 18, y: 10)
                     VStack(alignment: .leading, spacing: 8) {
                         Text(anime.title)
-                            .font(.system(size: 24, weight: .heavy))
+                            .font(.display(22, .black, relativeTo: .title))
                             .appear(1)
-                            .foregroundStyle(.white)
+                            .foregroundStyle(Theme.cream)
                             .lineLimit(4)
                             .minimumScaleFactor(0.8)
                         if anime.title != anime.name {
                             Text(anime.name).font(.subheadline).foregroundStyle(Theme.secondaryText).lineLimit(2)
                         }
                         HStack(spacing: 6) {
-                            if let score = anime.score {
-                                Tag(text: String(format: "★ %.2f", score), color: Theme.scoreColor(score), filled: true)
-                            }
+                            if let score = anime.score { ScoreSeal(score: score, large: true) }
                             if let status = anime.status {
-                                Tag(text: status.title, color: status == .ongoing ? Theme.pink : .white)
+                                Tag(text: status.title, color: status == .ongoing ? Theme.accent : .white)
                             }
                         }
                         if anime.status == .ongoing, let next = anime.nextEpisodeAt, next > Date() {
                             Label("Новая серия \(next.formatted(.relative(presentation: .named)))", systemImage: "bell.fill")
                                 .font(.caption.weight(.semibold))
-                                .foregroundStyle(Theme.pink)
+                                .foregroundStyle(Theme.accent)
                         }
                     }
                     Spacer(minLength: 0)
@@ -275,7 +274,7 @@ private struct AnimeDetailContent: View {
 
     private func descriptionBlock(_ text: String) -> some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("О тайтле").font(.title3.weight(.heavy))
+            Text("О тайтле").font(.display(18, .bold, relativeTo: .title3))
             Text(text)
                 .font(.callout)
                 .foregroundStyle(Color.white.opacity(0.85))
@@ -289,7 +288,7 @@ private struct AnimeDetailContent: View {
                     Image(systemName: descriptionExpanded ? "chevron.up" : "chevron.down").font(.caption.weight(.bold))
                 }
                 .font(.subheadline.weight(.semibold))
-                .foregroundStyle(Theme.pink)
+                .foregroundStyle(Theme.accent)
             }
         }
     }
@@ -315,7 +314,7 @@ private struct AnimeDetailContent: View {
             ForEach(items) { item in
                 VStack(alignment: .leading, spacing: 3) {
                     Text(item.title).font(.caption).foregroundStyle(Theme.tertiaryText)
-                    Text(item.value).font(.subheadline.weight(.semibold)).foregroundStyle(.white).lineLimit(2)
+                    Text(item.value).font(.subheadline.weight(.semibold)).foregroundStyle(Theme.cream).lineLimit(2)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(12)
@@ -329,7 +328,7 @@ private struct AnimeDetailContent: View {
     private func watchSection(_ anime: Anime) -> some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack(alignment: .firstTextBaseline) {
-                Text("Смотреть").font(.title3.weight(.heavy))
+                Text("Смотреть").font(.display(18, .bold, relativeTo: .title3))
                 Spacer()
                 if !model.episodes.isEmpty {
                     Text("\(model.episodes.count) \(Self.episodesWord(model.episodes.count))")
@@ -561,7 +560,7 @@ private struct AnimeDetailContent: View {
 
     private func related(_ anime: Anime) -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            SectionHeader(title: "Связанное", subtitle: "Сезоны, фильмы и спешлы")
+            SectionHeader(title: "Связанное", subtitle: "Сезоны, фильмы и спешлы", kicker: "関連")
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(alignment: .top, spacing: 14) {
                     ForEach(Array(anime.related.enumerated()), id: \.element.anime.id) { index, item in
@@ -570,7 +569,7 @@ private struct AnimeDetailContent: View {
                                 AnimeCard(anime: item.anime, width: 118, zoomID: "related-\(item.anime.id)")
                                 Text(item.relation)
                                     .font(.caption2.weight(.bold))
-                                    .foregroundStyle(Theme.pink)
+                                    .foregroundStyle(Theme.accent)
                             }
                         }
                         .buttonStyle(PressableStyle())
@@ -595,18 +594,18 @@ private struct EpisodeRow: View {
                     ThumbnailImage(url: episode.previewURL)
                 } else {
                     RoundedRectangle(cornerRadius: 10, style: .continuous)
-                        .fill(LinearGradient(colors: [Theme.violet.opacity(0.35), Theme.pink.opacity(0.25)],
+                        .fill(LinearGradient(colors: [Theme.gold.opacity(0.35), Theme.accent.opacity(0.25)],
                                              startPoint: .topLeading, endPoint: .bottomTrailing))
                         .aspectRatio(16 / 9, contentMode: .fit)
                         .overlay {
                             Text(episode.numberText)
                                 .font(.system(size: 22, weight: .heavy).monospacedDigit())
-                                .foregroundStyle(.white)
+                                .foregroundStyle(Theme.cream)
                         }
                 }
                 if let progress, progress.position > 0, !progress.isWatched {
                     GeometryReader { proxy in
-                        Capsule().fill(Theme.accentGradient)
+                        Capsule().fill(Theme.accentFill)
                             .frame(width: proxy.size.width * CGFloat(progress.fraction), height: 3)
                             .frame(maxHeight: .infinity, alignment: .bottom)
                     }
@@ -617,7 +616,7 @@ private struct EpisodeRow: View {
             .overlay {
                 Image(systemName: "play.fill")
                     .font(.caption.weight(.bold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Theme.cream)
                     .frame(width: 28, height: 28)
                     .background(Color.black.opacity(0.45), in: Circle())
             }
@@ -625,7 +624,7 @@ private struct EpisodeRow: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(episode.displayTitle)
                     .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Theme.cream)
                     .lineLimit(2)
                     .multilineTextAlignment(.leading)
                 HStack(spacing: 6) {
@@ -636,7 +635,7 @@ private struct EpisodeRow: View {
                         Text(player)
                     }
                     if isCurrent {
-                        Text("· Вы остановились здесь").foregroundStyle(Theme.pink)
+                        Text("· Вы остановились здесь").foregroundStyle(Theme.accent)
                     }
                 }
                 .font(.caption)
@@ -649,7 +648,7 @@ private struct EpisodeRow: View {
         }
         .padding(8)
         .background(isCurrent ? Theme.surfaceStrong : Theme.surface, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
-        .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).strokeBorder(isCurrent ? Theme.pink.opacity(0.5) : Theme.stroke))
+        .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).strokeBorder(isCurrent ? Theme.accent.opacity(0.5) : Theme.stroke))
         .opacity(progress?.isWatched == true ? 0.7 : 1)
         .contentShape(Rectangle())
     }

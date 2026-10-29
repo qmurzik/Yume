@@ -83,7 +83,7 @@ struct CatalogFiltersView: View {
                             Haptics.tap()
                             query = CatalogQuery(order: query.order)
                         }
-                        .foregroundStyle(Theme.pink)
+                        .foregroundStyle(Theme.accent)
                     }
                 }
             }
@@ -136,7 +136,7 @@ struct CatalogFiltersView: View {
 
     private func group<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(title).font(.headline).foregroundStyle(.white)
+            Text(title).font(.headline).foregroundStyle(Theme.cream)
             content()
         }
     }

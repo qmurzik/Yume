@@ -17,7 +17,7 @@ struct AnimeAppMain: App {
             RootView()
                 .environmentObject(library)
                 .preferredColorScheme(.dark)
-                .tint(Theme.pink)
+                .tint(Theme.accent)
         }
         .onChange(of: scenePhase) { phase in
             if phase != .active { library.saveNow() }

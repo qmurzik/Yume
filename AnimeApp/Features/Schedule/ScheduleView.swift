@@ -48,20 +48,20 @@ struct ScheduleView: View {
         let count = model.entries(for: day).count
         return VStack(spacing: 4) {
             Text(ScheduleViewModel.dayNames[day - 1]).font(.caption.weight(.bold))
-            Text(date.formatted(.dateTime.day())).font(.title3.weight(.heavy))
+            Text(date.formatted(.dateTime.day())).font(.display(18, .bold, relativeTo: .title3))
             Circle()
-                .fill(count > 0 ? (selected ? Color.white : Theme.pink) : Color.clear)
+                .fill(count > 0 ? (selected ? Color.white : Theme.accent) : Color.clear)
                 .frame(width: 5, height: 5)
         }
-        .foregroundStyle(selected ? Color.white : (day == today ? Theme.pink : Theme.secondaryText))
+        .foregroundStyle(selected ? Color.white : (day == today ? Theme.accent : Theme.secondaryText))
         .frame(width: 52, height: 74)
         .background {
             RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(selected ? AnyShapeStyle(Theme.accentGradient) : AnyShapeStyle(Theme.surface))
+                .fill(selected ? AnyShapeStyle(Theme.accentFill) : AnyShapeStyle(Theme.surface))
         }
         .overlay {
             RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .strokeBorder(day == today && !selected ? Theme.pink.opacity(0.6) : Theme.stroke)
+                .strokeBorder(day == today && !selected ? Theme.accent.opacity(0.6) : Theme.stroke)
         }
     }
 
@@ -80,7 +80,8 @@ struct ScheduleView: View {
             VStack(alignment: .leading, spacing: 12) {
                 SectionHeader(
                     title: model.day == today ? "Сегодня" : ScheduleViewModel.fullDayNames[model.day - 1],
-                    subtitle: items.isEmpty ? nil : "\(items.count) \(Self.titlesWord(items.count)) по расписанию AniLibria"
+                    subtitle: items.isEmpty ? nil : "\(items.count) \(Self.titlesWord(items.count)) по расписанию AniLibria",
+                    kicker: "放送予定"
                 )
                 if items.isEmpty {
                     EmptyStateView(title: "В этот день серий нет", message: "Выберите другой день недели.", systemImage: "calendar.badge.exclamationmark")
@@ -125,12 +126,12 @@ private struct ScheduleRow: View {
         HStack(spacing: 14) {
             PosterImage(url: entry.title.posterURL, cornerRadius: 10).frame(width: 62)
             VStack(alignment: .leading, spacing: 5) {
-                Text(entry.title.title).font(.headline).foregroundStyle(.white).lineLimit(2).multilineTextAlignment(.leading)
+                Text(entry.title.title).font(.headline).foregroundStyle(Theme.cream).lineLimit(2).multilineTextAlignment(.leading)
                 if let original = entry.title.originalTitle {
                     Text(original).font(.caption).foregroundStyle(Theme.secondaryText).lineLimit(1)
                 }
                 if let next = entry.nextEpisode {
-                    Tag(text: "\(next) серия", color: Theme.pink)
+                    Tag(text: "\(next) серия", color: Theme.accent)
                 } else if !entry.isOngoing {
                     Tag(text: "Сезон завершён", color: Theme.secondaryText)
                 }

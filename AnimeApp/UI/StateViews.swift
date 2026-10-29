@@ -5,7 +5,7 @@ struct LoadingStateView: View {
 
     var body: some View {
         VStack(spacing: 14) {
-            ProgressView().tint(Theme.pink).controlSize(.large)
+            ProgressView().tint(Theme.accent).controlSize(.large)
             Text(text).font(.footnote).foregroundStyle(Theme.secondaryText)
         }
         .frame(maxWidth: .infinity, minHeight: 180)
@@ -27,7 +27,7 @@ struct ErrorStateView: View {
                     .foregroundStyle(.orange)
             }
             if !compact {
-                Text("Не получилось загрузить").font(.headline).foregroundStyle(.white)
+                Text("Не получилось загрузить").font(.headline).foregroundStyle(Theme.cream)
             }
             Text(error.localizedDescription)
                 .font(.footnote)
@@ -42,8 +42,8 @@ struct ErrorStateView: View {
                     .font(.subheadline.weight(.semibold))
                     .padding(.horizontal, 18)
                     .padding(.vertical, 10)
-                    .background(Theme.accentGradient, in: Capsule())
-                    .foregroundStyle(.white)
+                    .background(Theme.accentFill, in: Capsule())
+                    .foregroundStyle(Theme.cream)
             }
             .buttonStyle(PressableStyle())
         }
@@ -60,12 +60,12 @@ struct EmptyStateView: View {
     var body: some View {
         VStack(spacing: 14) {
             ZStack {
-                Circle().fill(Theme.accentGradient).opacity(0.18).frame(width: 88, height: 88)
+                Circle().fill(Theme.accentFill).opacity(0.18).frame(width: 88, height: 88)
                 Image(systemName: systemImage)
                     .font(.system(size: 34, weight: .semibold))
-                    .foregroundStyle(Theme.accentGradient)
+                    .foregroundStyle(Theme.accentFill)
             }
-            Text(title).font(.headline).foregroundStyle(.white).multilineTextAlignment(.center)
+            Text(title).font(.headline).foregroundStyle(Theme.cream).multilineTextAlignment(.center)
             if let message {
                 Text(message)
                     .font(.footnote)

@@ -56,10 +56,10 @@ struct SearchView: View {
         VStack(alignment: .leading, spacing: 26) {
             if !model.recent.isEmpty {
                 VStack(alignment: .leading, spacing: 12) {
-                    SectionHeader(title: "Вы искали") {
+                    SectionHeader(title: "Вы искали", kicker: "履歴") {
                         Button("Очистить") { model.clearRecent() }
                             .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(Theme.pink)
+                            .foregroundStyle(Theme.accent)
                     }
                     Flow(spacing: 8) {
                         ForEach(model.recent, id: \.self) { query in
@@ -76,7 +76,7 @@ struct SearchView: View {
                 }
             }
             VStack(alignment: .leading, spacing: 12) {
-                SectionHeader(title: "Сейчас смотрят", subtitle: "Популярные онгоинги")
+                SectionHeader(title: "Сейчас смотрят", subtitle: "Популярные онгоинги", kicker: "人気")
                 switch model.trending {
                 case .idle, .loading:
                     SkeletonGrid(columns: columns)

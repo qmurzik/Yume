@@ -12,22 +12,21 @@ struct HomeView: View {
                     if !library.continueWatching.isEmpty {
                         ContinueWatchingShelf(records: library.continueWatching)
                     }
-                    if !model.genres.isEmpty {
-                        GenreShortcuts(genres: model.genres).transition(.opacity)
-                    }
-                    AnimeShelf(title: "Онгоинги", subtitle: "Выходят прямо сейчас", state: model.ongoing,
+                    AnimeShelf(title: "Онгоинги", subtitle: "Выходят прямо сейчас", kicker: "放送中", state: model.ongoing,
                                seeAll: CatalogRoute(title: "Онгоинги", query: HomeViewModel.ongoingQuery)) {
                         Task { await model.loadOngoing() }
                     }
-                    AnimeShelf(title: "Новые серии", subtitle: "Свежие эпизоды с озвучкой", state: model.updated,
+                    TopTenShelf(title: "Топ-10 популярного", kicker: "人気 · TOP 10", state: model.popular) {
+                        Task { await model.loadPopular() }
+                    }
+                    if !model.genres.isEmpty {
+                        GenreShortcuts(genres: model.genres).transition(.opacity)
+                    }
+                    AnimeShelf(title: "Новые серии", subtitle: "Свежие эпизоды с озвучкой", kicker: "新着", state: model.updated,
                                emptyText: "Свежих серий пока нет") {
                         Task { await model.loadUpdated() }
                     }
-                    AnimeShelf(title: "Популярное", state: model.popular,
-                               seeAll: CatalogRoute(title: "Популярное", query: HomeViewModel.popularQuery)) {
-                        Task { await model.loadPopular() }
-                    }
-                    AnimeShelf(title: "Лучшее за всё время", subtitle: "По оценкам Shikimori", state: model.top,
+                    AnimeShelf(title: "Лучшее за всё время", subtitle: "По оценкам Shikimori", kicker: "名作", state: model.top,
                                seeAll: CatalogRoute(title: "Лучшее", query: HomeViewModel.topQuery)) {
                         Task { await model.loadTop() }
                     }
@@ -59,13 +58,31 @@ struct HomeView: View {
     }
 }
 
+/// Brand mark over the hero: the name with a vermilion seal dot.
+private struct Wordmark: View {
+    var body: some View {
+        HStack(spacing: 6) {
+            Text("АНИМЕ")
+                .font(.display(17, .black, relativeTo: .headline))
+                .tracking(1)
+                .foregroundStyle(Theme.cream)
+            RoundedRectangle(cornerRadius: 2, style: .continuous)
+                .fill(Theme.accent)
+                .frame(width: 8, height: 8)
+                .rotationEffect(.degrees(45))
+        }
+        .shadow(color: .black.opacity(0.5), radius: 6)
+        .accessibilityHidden(true)
+    }
+}
+
 /// Horizontal row of genres, each opening the catalog filtered by it.
 private struct GenreShortcuts: View {
     let genres: [Genre]
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            SectionHeader(title: "Жанры")
+            SectionHeader(title: "Жанры", kicker: "ジャンル")
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
                     ForEach(Array(genres.enumerated()), id: \.element.id) { index, genre in
@@ -120,7 +137,7 @@ private struct HeroCarousel: View {
             HStack(spacing: 6) {
                 ForEach(items.indices, id: \.self) { index in
                     Capsule()
-                        .fill(index == selection ? AnyShapeStyle(Theme.accentGradient) : AnyShapeStyle(Color.white.opacity(0.3)))
+                        .fill(index == selection ? AnyShapeStyle(Theme.accentFill) : AnyShapeStyle(Color.white.opacity(0.3)))
                         .frame(width: index == selection ? 22 : 7, height: 7)
                 }
             }
@@ -128,6 +145,7 @@ private struct HeroCarousel: View {
             .padding(.bottom, 4)
         }
         .frame(height: 540)
+        .overlay(alignment: .topLeading) { Wordmark().padding(.horizontal, 20).padding(.top, 58) }
         .onReceive(timer) { _ in
             withAnimation(.easeInOut(duration: 0.6)) { selection = (selection + 1) % max(1, items.count) }
         }
@@ -142,20 +160,22 @@ private struct HeroCarousel: View {
                     .offset(x: -proxy.size.width * 0.15 - proxy.frame(in: .global).minX * 0.3)
             }
             .overlay(Theme.heroFade)
-            .overlay(LinearGradient(colors: [.black.opacity(0.45), .clear], startPoint: .top, endPoint: .center))
+            .overlay(LinearGradient(colors: [.black.opacity(0.5), .clear], startPoint: .top, endPoint: .center))
+            .overlay(GrainOverlay(opacity: 0.12))
             .zoomSource("hero-\(anime.id)")
 
             VStack(alignment: .leading, spacing: 12) {
-                HStack(spacing: 6) {
-                    Tag(text: "ОНГОИНГ", color: Theme.pink, filled: true)
-                    if let score = anime.score {
-                        Tag(text: String(format: "★ %.1f", score), color: Theme.scoreColor(score))
-                    }
+                HStack(spacing: 8) {
+                    Text("放送中 · ОНГОИНГ")
+                        .font(.system(size: 11, weight: .heavy))
+                        .tracking(2)
+                        .foregroundStyle(Theme.accent)
+                    if let score = anime.score { ScoreSeal(score: score, large: true) }
                     if let kind = anime.kind { Tag(text: kind.title) }
                 }
                 Text(anime.title)
-                    .font(.system(size: 30, weight: .heavy))
-                    .foregroundStyle(.white)
+                    .font(.display(28, .black, relativeTo: .largeTitle))
+                    .foregroundStyle(Theme.cream)
                     .lineLimit(3)
                     .shadow(color: .black.opacity(0.5), radius: 8)
                 if !anime.genres.isEmpty {
@@ -173,7 +193,7 @@ private struct HeroCarousel: View {
                         library.toggleFavorite(SavedAnime(anime: anime))
                     } label: {
                         Image(systemName: library.isFavorite(anime.id) ? "heart.fill" : "heart")
-                            .foregroundStyle(library.isFavorite(anime.id) ? Theme.pink : .white)
+                            .foregroundStyle(library.isFavorite(anime.id) ? Theme.accent : .white)
                             .id(library.isFavorite(anime.id))
                             .transition(.scale(scale: 0.4).combined(with: .opacity))
                             .animation(.spring(response: 0.35, dampingFraction: 0.5), value: library.isFavorite(anime.id))
@@ -195,7 +215,7 @@ struct ContinueWatchingShelf: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            SectionHeader(title: "Продолжить просмотр")
+            SectionHeader(title: "Продолжить", kicker: "続きから")
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(spacing: 14) {
                     ForEach(Array(records.enumerated()), id: \.element.id) { index, record in
@@ -230,7 +250,7 @@ private struct ContinueCard: View {
             VStack(alignment: .leading, spacing: 6) {
                 Text(record.anime.title)
                     .font(.subheadline.weight(.bold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Theme.cream)
                     .lineLimit(2)
                     .multilineTextAlignment(.leading)
                 Text(record.progress.isWatched ? "Просмотрена · \(record.episodeTitle)" : record.episodeTitle)
@@ -239,10 +259,10 @@ private struct ContinueCard: View {
                     .lineLimit(1)
                 Spacer(minLength: 0)
                 HStack(spacing: 8) {
-                    ProgressView(value: record.progress.fraction).tint(Theme.pink)
+                    ProgressView(value: record.progress.fraction).tint(Theme.accent)
                     Image(systemName: "play.circle.fill")
                         .font(.title2)
-                        .foregroundStyle(Theme.accentGradient)
+                        .foregroundStyle(Theme.accentFill)
                 }
             }
             .padding(.vertical, 4)

@@ -45,13 +45,13 @@ struct LibraryView: View {
                     } label: {
                         Image(systemName: "gearshape.fill")
                     }
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Theme.cream)
                     .accessibilityLabel("Настройки")
                 }
                 if tab == .history, !library.history.isEmpty {
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button("Очистить") { confirmClear = true }
-                            .foregroundStyle(Theme.pink)
+                            .foregroundStyle(Theme.accent)
                     }
                 }
             }
@@ -74,12 +74,12 @@ struct LibraryView: View {
         .padding(.vertical, 18)
         .background {
             ZStack {
-                Theme.accentGradient.opacity(0.9)
+                Theme.accentFill.opacity(0.9)
                 LinearGradient(colors: [.clear, .black.opacity(0.25)], startPoint: .top, endPoint: .bottom)
             }
         }
         .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
-        .shadow(color: Theme.pink.opacity(0.3), radius: 18, y: 8)
+        .shadow(color: Theme.accent.opacity(0.3), radius: 18, y: 8)
         .padding(.horizontal)
     }
 
@@ -94,10 +94,10 @@ struct LibraryView: View {
 
     private func stat(value: String, title: String) -> some View {
         VStack(spacing: 4) {
-            Text(value).font(.title2.weight(.heavy)).monospacedDigit()
+            Text(value).font(.display(22, .black, relativeTo: .title2)).monospacedDigit()
             Text(title).font(.caption.weight(.medium)).opacity(0.85).multilineTextAlignment(.center)
         }
-        .foregroundStyle(.white)
+        .foregroundStyle(Theme.cream)
         .frame(maxWidth: .infinity)
     }
 
@@ -189,12 +189,12 @@ private struct HistoryRow: View {
         HStack(spacing: 14) {
             PosterImage(url: record.anime.posterURL, cornerRadius: 10).frame(width: 62)
             VStack(alignment: .leading, spacing: 6) {
-                Text(record.anime.title).font(.headline).foregroundStyle(.white).lineLimit(2).multilineTextAlignment(.leading)
+                Text(record.anime.title).font(.headline).foregroundStyle(Theme.cream).lineLimit(2).multilineTextAlignment(.leading)
                 Text("\(record.episodeTitle) · \(record.voice)")
                     .font(.caption)
                     .foregroundStyle(Theme.secondaryText)
                     .lineLimit(1)
-                ProgressView(value: record.progress.fraction).tint(Theme.pink)
+                ProgressView(value: record.progress.fraction).tint(Theme.accent)
                 HStack {
                     Label("\(watchedCount)", systemImage: "checkmark.circle")
                     Spacer()

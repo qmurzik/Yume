@@ -29,7 +29,7 @@ struct SettingsView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Готово") { dismiss() }.foregroundStyle(Theme.pink)
+                    Button("Готово") { dismiss() }.foregroundStyle(Theme.accent)
                 }
             }
         }
@@ -42,8 +42,8 @@ struct SettingsView: View {
         VStack(alignment: .leading, spacing: 16) {
             HStack(spacing: 12) {
                 ZStack {
-                    RoundedRectangle(cornerRadius: 12, style: .continuous).fill(Theme.accentGradient)
-                    Image(systemName: "person.crop.circle.badge.checkmark").font(.title3.weight(.semibold)).foregroundStyle(.white)
+                    RoundedRectangle(cornerRadius: 12, style: .continuous).fill(Theme.accentFill)
+                    Image(systemName: "person.crop.circle.badge.checkmark").font(.title3.weight(.semibold)).foregroundStyle(Theme.cream)
                 }
                 .frame(width: 46, height: 46)
                 VStack(alignment: .leading, spacing: 2) {
@@ -139,14 +139,14 @@ struct SettingsView: View {
                     Link(destination: URL(string: "https://yummyani.me/dev/applications")!) {
                         Label("Открыть страницу приложений", systemImage: "safari")
                             .font(.footnote.weight(.semibold))
-                            .foregroundStyle(Theme.pink)
+                            .foregroundStyle(Theme.accent)
                     }
                 }
                 .padding(.top, 8)
             } label: {
-                Text("Вставить ключ вручную").font(.subheadline.weight(.semibold)).foregroundStyle(.white)
+                Text("Вставить ключ вручную").font(.subheadline.weight(.semibold)).foregroundStyle(Theme.cream)
             }
-            .tint(Theme.pink)
+            .tint(Theme.accent)
         }
     }
 
@@ -213,7 +213,7 @@ struct SettingsView: View {
                     Text("Включать следующую серию после титров").font(.caption).foregroundStyle(Theme.secondaryText)
                 }
             }
-            .tint(Theme.pink)
+            .tint(Theme.accent)
             VStack(alignment: .leading, spacing: 8) {
                 Text("Качество по умолчанию").font(.subheadline.weight(.semibold))
                 HStack(spacing: 8) {

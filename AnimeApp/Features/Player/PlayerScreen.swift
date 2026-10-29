@@ -13,6 +13,7 @@ struct PlayerScreen: View {
     @State private var isLandscape = false
     @State private var isLocked = false
     @State private var dragOffset: CGFloat = 0
+    @State private var showSite = false
 
     private struct SeekBubble: Equatable {
         let forward: Bool
@@ -50,9 +51,8 @@ struct PlayerScreen: View {
                     VStack(spacing: 0) {
                         videoArea
                             .frame(width: proxy.size.width, height: proxy.size.width * 9 / 16)
-                        PortraitPanel(model: model, progress: library.progress(animeID: model.context.anime.id)) {
-                            dismiss()
-                        }
+                        PortraitPanel(model: model, progress: library.progress(animeID: model.context.anime.id),
+                                      onClose: { dismiss() }, onOpenSite: { showSite = true })
                     }
                 }
             }
@@ -75,6 +75,26 @@ struct PlayerScreen: View {
             if isLandscape { Orientation.set(landscape: false) }
         }
         .onChange(of: model.isPlaying) { _ in scheduleHide() }
+        .overlay(alignment: .top) {
+            if let notice = model.embedNotice {
+                Label(notice, systemImage: "arrow.triangle.2.circlepath")
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(Theme.cream)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 10)
+                    .background(Theme.elevated, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                    .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).strokeBorder(Theme.accent.opacity(0.5)))
+                    .padding(.horizontal)
+                    .padding(.top, 8)
+                    .transition(.move(edge: .top).combined(with: .opacity))
+            }
+        }
+        .animation(Motion.spring, value: model.embedNotice)
+        .sheet(isPresented: $showSite) {
+            if let url = model.context.webURL {
+                SafariView(url: url).ignoresSafeArea()
+            }
+        }
         .sheet(isPresented: $showEpisodes) {
             EpisodesSheet(model: model, progress: library.progress(animeID: model.context.anime.id)) { index in
                 showEpisodes = false
@@ -95,7 +115,7 @@ struct PlayerScreen: View {
                 VStack(spacing: 12) {
                     ProgressView().tint(.white).controlSize(.large)
                     if isLandscape {
-                        Text(model.episode.displayTitle).font(.headline).foregroundStyle(.white)
+                        Text(model.episode.displayTitle).font(.headline).foregroundStyle(Theme.cream)
                     }
                 }
                 closeOverlay
@@ -109,8 +129,17 @@ struct PlayerScreen: View {
                         .lineLimit(3)
                         .padding(.horizontal, 24)
                     HStack(spacing: 10) {
-                        Button("Повторить") { model.retry() }.buttonStyle(PrimaryButtonStyle())
-                        if let other = model.alternatives.first(where: { $0.id != model.episode.id }) {
+                        if model.embedsExhausted, model.context.webURL != nil {
+                            Button {
+                                showSite = true
+                            } label: {
+                                Label("Смотреть на сайте", systemImage: "safari")
+                            }
+                            .buttonStyle(PrimaryButtonStyle())
+                        } else {
+                            Button("Повторить") { model.retry() }.buttonStyle(PrimaryButtonStyle())
+                        }
+                        if !model.embedsExhausted, let other = model.alternatives.first(where: { $0.id != model.episode.id }) {
                             Button("Другой плеер") { model.switchPlayer(to: other) }.buttonStyle(GlassButtonStyle())
                         }
                     }
@@ -119,7 +148,8 @@ struct PlayerScreen: View {
             case .native:
                 nativePlayer
             case .embed(let url):
-                EmbedPlayerView(url: url)
+                EmbedPlayerView(url: url) { reason in model.embedFailed(reason: reason) }
+                    .id(url)
                 // The web page owns the surface, so our own way out must always be there.
                 closeOverlay
             }
@@ -247,7 +277,7 @@ struct PlayerScreen: View {
                 .frame(width: metrics.icon, height: metrics.icon)
                 .background(.ultraThinMaterial, in: Circle())
         }
-        .foregroundStyle(.white)
+        .foregroundStyle(Theme.cream)
         .accessibilityLabel("Закрыть плеер")
     }
 
@@ -259,7 +289,7 @@ struct PlayerScreen: View {
                     Text(model.context.anime.title).font(.subheadline.weight(.bold)).lineLimit(1)
                     Text(episodeSubtitle).font(.caption).foregroundStyle(Theme.secondaryText).lineLimit(1)
                 }
-                .foregroundStyle(.white)
+                .foregroundStyle(Theme.cream)
             }
             Spacer(minLength: 4)
             iconButton("lock.fill", label: "Заблокировать управление") {
@@ -324,7 +354,7 @@ struct PlayerScreen: View {
                 .font(.system(size: metrics.icon * 0.42, weight: .semibold))
                 .frame(width: metrics.icon, height: metrics.icon)
                 .background(.ultraThinMaterial, in: Circle())
-                .foregroundStyle(.white)
+                .foregroundStyle(Theme.cream)
         }
     }
 
@@ -338,7 +368,7 @@ struct PlayerScreen: View {
                 .frame(width: metrics.icon, height: metrics.icon)
                 .background(.ultraThinMaterial, in: Circle())
         }
-        .foregroundStyle(.white)
+        .foregroundStyle(Theme.cream)
         .accessibilityLabel(label)
     }
 
@@ -367,7 +397,7 @@ struct PlayerScreen: View {
                 }
             }
             .buttonStyle(PressableStyle(scale: 0.9))
-            .foregroundStyle(.white)
+            .foregroundStyle(Theme.cream)
             .animation(.spring(response: 0.3, dampingFraction: 0.6), value: model.isPlaying)
             .animation(Motion.fade, value: model.isBuffering)
             .accessibilityLabel(model.isPlaying ? "Пауза" : "Смотреть")
@@ -434,7 +464,7 @@ struct PlayerScreen: View {
                         pillButton("Следующая", systemImage: "forward.end.fill") { model.playNext() }
                     }
                     Spacer(minLength: 8)
-                    if model.rate != 1 { Tag(text: String(format: "%gx", model.rate), color: Theme.pink) }
+                    if model.rate != 1 { Tag(text: String(format: "%gx", model.rate), color: Theme.accent) }
                     if let quality = model.quality { Tag(text: quality.label) }
                     iconButton("arrow.down.right.and.arrow.up.left", label: "Выйти из полноэкранного режима") {
                         Orientation.set(landscape: false)
@@ -478,7 +508,7 @@ struct PlayerScreen: View {
                 .background(.ultraThinMaterial, in: Capsule())
         }
         .buttonStyle(PressableStyle())
-        .foregroundStyle(.white)
+        .foregroundStyle(Theme.cream)
     }
 
     private var lockedOverlay: some View {
@@ -496,7 +526,7 @@ struct PlayerScreen: View {
                     .padding(.vertical, 10)
                     .background(.ultraThinMaterial, in: Capsule())
             }
-            .foregroundStyle(.white)
+            .foregroundStyle(Theme.cream)
             .padding(.bottom, isLandscape ? 36 : 12)
         }
         .transition(.opacity)
@@ -515,9 +545,9 @@ struct PlayerScreen: View {
                         .font(isLandscape ? .headline : .footnote.weight(.bold))
                         .padding(.horizontal, isLandscape ? 20 : 12)
                         .padding(.vertical, isLandscape ? 13 : 8)
-                        .background(Theme.accentGradient, in: Capsule())
-                        .foregroundStyle(.white)
-                        .shadow(color: Theme.pink.opacity(0.4), radius: 10, y: 4)
+                        .background(Theme.accentFill, in: Capsule())
+                        .foregroundStyle(Theme.cream)
+                        .shadow(color: Theme.accent.opacity(0.4), radius: 10, y: 4)
                 }
                 .buttonStyle(PressableStyle())
             }
@@ -549,7 +579,7 @@ struct PlayerScreen: View {
                 Image(systemName: bubble.forward ? "goforward" : "gobackward").font(isLandscape ? .title.weight(.bold) : .title3.weight(.bold))
                 Text("\(bubble.seconds) сек").font(.caption.weight(.bold))
             }
-            .foregroundStyle(.white)
+            .foregroundStyle(Theme.cream)
             .frame(width: isLandscape ? 120 : 84, height: isLandscape ? 120 : 84)
             .background(Color.white.opacity(0.14), in: Circle())
             .padding(.horizontal, isLandscape ? 60 : 24)
@@ -605,6 +635,7 @@ private struct PortraitPanel: View {
     @ObservedObject var model: PlayerViewModel
     let progress: [String: EpisodeProgress]
     let onClose: () -> Void
+    let onOpenSite: () -> Void
 
     private var isEmbed: Bool {
         if case .embed = model.phase { return true }
@@ -642,8 +673,8 @@ private struct PortraitPanel: View {
         VStack(alignment: .leading, spacing: 6) {
             HStack(alignment: .top) {
                 Text(model.context.anime.title)
-                    .font(.title3.weight(.heavy))
-                    .foregroundStyle(.white)
+                    .font(.display(18, .bold, relativeTo: .title3))
+                    .foregroundStyle(Theme.cream)
                     .lineLimit(2)
                 Spacer(minLength: 8)
                 Button {
@@ -655,7 +686,7 @@ private struct PortraitPanel: View {
                         .frame(width: 34, height: 34)
                         .background(Theme.surfaceStrong, in: Circle())
                 }
-                .foregroundStyle(.white)
+                .foregroundStyle(Theme.cream)
                 .accessibilityLabel("Закрыть плеер")
             }
             Text(model.episode.displayTitle)
@@ -663,10 +694,10 @@ private struct PortraitPanel: View {
                 .foregroundStyle(Theme.secondaryText)
                 .lineLimit(2)
             HStack(spacing: 6) {
-                Tag(text: model.episode.voice, color: Theme.pink)
+                Tag(text: model.episode.voice, color: Theme.accent)
                 if let player = model.episode.player { Tag(text: player) }
                 if let quality = model.quality { Tag(text: quality.label) }
-                if model.rate != 1 { Tag(text: String(format: "%gx", model.rate), color: Theme.violet) }
+                if model.rate != 1 { Tag(text: String(format: "%gx", model.rate), color: Theme.gold) }
             }
         }
         .id("header")
@@ -677,10 +708,10 @@ private struct PortraitPanel: View {
         VStack(alignment: .leading, spacing: 10) {
             Label("Видео показывает плеер \(model.episode.player ?? "YummyAnime")", systemImage: "info.circle.fill")
                 .font(.subheadline.weight(.semibold))
-                .foregroundStyle(.white)
+                .foregroundStyle(Theme.cream)
             Text(model.alternatives.count > 1
-                 ? "Если видео не открывается («страницы не существует», чёрный экран), выберите другой плеер ниже."
-                 : "Если видео не открывается, выберите другую озвучку или источник в карточке тайтла.")
+                 ? "Если плеер покажет ошибку, приложение само включит следующий. Чёрный экран — выберите плеер вручную."
+                 : "Если видео не открывается, посмотрите серию на сайте или выберите другую озвучку.")
                 .font(.caption)
                 .foregroundStyle(Theme.secondaryText)
             HStack(spacing: 10) {
@@ -694,15 +725,15 @@ private struct PortraitPanel: View {
                     }
                     .buttonStyle(GlassButtonStyle())
                 }
-                if let url = model.context.webURL {
-                    Link(destination: url) {
-                        Label("Открыть на сайте", systemImage: "safari")
+                if model.context.webURL != nil {
+                    Button {
+                        Haptics.tap()
+                        onOpenSite()
+                    } label: {
+                        Label("Смотреть на сайте", systemImage: "safari")
                             .font(.footnote.weight(.semibold))
-                            .padding(.horizontal, 16)
-                            .frame(minHeight: 44)
-                            .background(Theme.surfaceStrong, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
                     }
-                    .foregroundStyle(.white)
+                    .buttonStyle(GlassButtonStyle())
                 }
             }
         }
@@ -772,7 +803,7 @@ private struct PortraitPanel: View {
 
     private func episodes(_ reader: ScrollViewProxy) -> some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("Серии · \(model.episodes.count)").font(.headline).foregroundStyle(.white)
+            Text("Серии · \(model.episodes.count)").font(.headline).foregroundStyle(Theme.cream)
             LazyVStack(spacing: 8) {
                 ForEach(Array(model.episodes.enumerated()), id: \.offset) { index, episode in
                     Button {
@@ -799,26 +830,26 @@ private struct PlayerEpisodeRow: View {
         HStack(spacing: 12) {
             ZStack {
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(isCurrent ? AnyShapeStyle(Theme.accentGradient) : AnyShapeStyle(Theme.surfaceStrong))
+                    .fill(isCurrent ? AnyShapeStyle(Theme.accentFill) : AnyShapeStyle(Theme.surfaceStrong))
                 if isCurrent {
                     Image(systemName: "waveform").font(.headline.weight(.bold))
                 } else {
                     Text(episode.numberText).font(.headline.monospacedDigit())
                 }
             }
-            .foregroundStyle(.white)
+            .foregroundStyle(Theme.cream)
             .frame(width: 46, height: 46)
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(episode.displayTitle)
                     .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Theme.cream)
                     .lineLimit(2)
                     .multilineTextAlignment(.leading)
                 if isCurrent {
-                    Text("Сейчас играет").font(.caption).foregroundStyle(Theme.pink)
+                    Text("Сейчас играет").font(.caption).foregroundStyle(Theme.accent)
                 } else if let progress, progress.position > 0, !progress.isWatched {
-                    ProgressView(value: progress.fraction).tint(Theme.pink)
+                    ProgressView(value: progress.fraction).tint(Theme.accent)
                 } else if let player = episode.player {
                     Text(player).font(.caption).foregroundStyle(Theme.tertiaryText)
                 }
@@ -830,7 +861,7 @@ private struct PlayerEpisodeRow: View {
         }
         .padding(8)
         .background(isCurrent ? Theme.surfaceStrong : Theme.surface, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
-        .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).strokeBorder(isCurrent ? Theme.pink.opacity(0.5) : Theme.stroke))
+        .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).strokeBorder(isCurrent ? Theme.accent.opacity(0.5) : Theme.stroke))
         .opacity(progress?.isWatched == true && !isCurrent ? 0.7 : 1)
     }
 }
@@ -843,8 +874,8 @@ private struct NextEpisodeCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("ДАЛЕЕ").font(.caption2.weight(.heavy)).foregroundStyle(Theme.pink)
-            Text(next.displayTitle).font(.headline).foregroundStyle(.white).lineLimit(2)
+            Text("ДАЛЕЕ").font(.caption2.weight(.heavy)).foregroundStyle(Theme.accent)
+            Text(next.displayTitle).font(.headline).foregroundStyle(Theme.cream).lineLimit(2)
             HStack(spacing: 10) {
                 Button(action: onPlay) {
                     Label(countdown.map { "Смотреть через \($0)" } ?? "Смотреть", systemImage: "play.fill")
